@@ -2,7 +2,7 @@
   "name": "liqpay-nestjs",
   "description": "LiqPay integration module for NestJS with support for payments, callbacks, and configuration via DI.",
   "module": "index.ts",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "author": "@bagdenius <bagdenius@gmail.com>",
   "devDependencies": {
