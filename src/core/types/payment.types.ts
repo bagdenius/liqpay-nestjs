@@ -516,6 +516,17 @@ export interface LiqPayPaymentSplitRule {
   rro_info?: LiqPayPaymentRroInfo;
 }
 
+// TODO: add docs
+export interface LiqPayDetailAddenda {
+  airLine: string;
+  ticketNumber: string;
+  passengerName: string;
+  flightNumber: string;
+  originCity: string;
+  destinationCity: string;
+  departureDate: string;
+}
+
 /**
  * __EN:__ Payer of the acquiring fee. Possible values: `sender`, `receiver`
  *
@@ -555,3 +566,6 @@ export type LiqPayLanguage = 'uk' | 'en';
  * - `year` - раз на рік
  */
 export type LiqPaySubscribePeriodicity = 'day' | 'week' | 'month' | 'year';
+
+// TODO: add data for fiscalization with the transfer of goods
+// TODO: додати дані для фіскалізації з передачею товарів
