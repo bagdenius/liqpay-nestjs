@@ -1,4 +1,4 @@
-export interface LiqPaySenderParams {
+export interface LiqPayRequestSenderParams {
   /**
    * __EN:__ Sender address
    *

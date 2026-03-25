@@ -3,7 +3,7 @@ import type {
   LiqPayMpiEci,
   LiqPayPaymentMethod,
   LiqPayPaymentStatus,
-} from '../common';
+} from '../../common';
 
 /**
  * __EN:__
@@ -335,27 +335,6 @@ export interface LiqPayCallbackData {
    * __UK:__ Комісія з відправника у валюті платежу
    */
   sender_commission: number;
-
-  /**
-   * __EN:__ Sender's first name
-   *
-   * __UK:__ Ім'я відправника
-   */
-  sender_first_name: string;
-
-  /**
-   * __EN:__ Sender's last name
-   *
-   * __UK:__ Прізвище відправника
-   */
-  sender_last_name: string;
-
-  /**
-   * __EN:__ Sender's phone number
-   *
-   * __UK:__ Телефон відправника
-   */
-  sender_phone: string;
 
   /**
    * __EN:__ Payment status

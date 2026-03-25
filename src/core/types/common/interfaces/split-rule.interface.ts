@@ -1,5 +1,4 @@
-import type { LiqPayPaymentCommisionPayer } from './commision-payer.type';
-import type { LiqPayPaymentRroInfo } from './rro-info.interface';
+import type { LiqPayPaymentCommisionPayer, LiqPayPaymentRroInfo } from '..';
 
 /**
  * __EN:__ Payment splitting options

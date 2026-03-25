@@ -1,4 +1,4 @@
-import type { LiqPayLanguage, LiqPayPaymentMethod } from '..';
+import type { LiqPayLanguage } from '../../common';
 
 export interface LiqPayCheckoutParams {
   /**
@@ -26,7 +26,7 @@ export interface LiqPayCheckoutParams {
    * - `invoice` - en: invoice to e-mail, uk: рахунок на e-mail
    * - `qr` - en: scanning a QR code, uk: сканування QR-коду
    */
-  paytypes?: LiqPayPaymentMethod;
+  paytypes?: string;
 
   /**
    * __EN:__ The URL in your store to which the buyer will be redirected after completing the purchase. Maximum length __510__ characters
