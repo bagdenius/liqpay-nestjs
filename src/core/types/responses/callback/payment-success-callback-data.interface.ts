@@ -1,4 +1,4 @@
-import type { LiqPayProductParams } from '../../requests/payment/params';
+import type { LiqPayProductParams } from '../../common';
 import type {
   LiqPayAmountParams,
   LiqPayBonusParams,

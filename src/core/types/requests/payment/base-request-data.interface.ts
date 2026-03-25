@@ -1,8 +1,7 @@
-import type { LiqPayMainParams } from '../../common';
+import type { LiqPayMainParams, LiqPayProductParams } from '../../common';
 import type {
   LiqPayAdvancedParams,
   LiqPayCheckoutParams,
-  LiqPayProductParams,
   LiqPayRequestSenderParams,
 } from './params';
 

@@ -5,6 +5,9 @@
   "version": "0.0.4",
   "type": "module",
   "author": "@bagdenius <bagdenius@gmail.com>",
+  "scripts": {
+    "build": "tsc ./src/index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
