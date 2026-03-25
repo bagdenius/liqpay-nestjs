@@ -1,4 +1,4 @@
-import type { LiqPayCustomerParams } from '../../common';
+import type { LiqPayCustomerParams } from '../../../common';
 
 /**
  * __EN:__ One-click payment params

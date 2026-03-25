@@ -1,4 +1,4 @@
-import type { LiqPayLanguage } from '../../common';
+import type { LiqPayLanguage } from '../../../common';
 
 export interface LiqPayCheckoutParams {
   /**

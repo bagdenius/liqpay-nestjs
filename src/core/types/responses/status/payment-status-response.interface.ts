@@ -4,7 +4,7 @@ import type {
   LiqPayMpiEci,
   LiqPayPaymentMethod,
   LiqPayPaymentStatus,
-} from '../common';
+} from '../../common';
 import type { LiqPayBonusType } from './bonus-type.type';
 import type { LiqPayResult } from './result.type';
 

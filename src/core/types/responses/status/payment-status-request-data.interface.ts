@@ -1,4 +1,4 @@
-import type { LiqPayBaseParams } from '../common';
+import type { LiqPayBaseParams } from '../../common';
 
 /**
  * __EN:__ API parameter data that is passed when forming a request to receive payment status as data in `base64` encoded string form when calling the LiqPay API

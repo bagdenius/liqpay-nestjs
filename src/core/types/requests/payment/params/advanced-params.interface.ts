@@ -1,4 +1,4 @@
-import type { LiqPayPaymentRroInfo } from '../../common';
+import type { LiqPayPaymentRroInfo } from '../../../common';
 
 export interface LiqPayAdvancedParams {
   /**

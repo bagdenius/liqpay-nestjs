@@ -4,7 +4,7 @@ import type {
   LiqPayCheckoutParams,
   LiqPayProductParams,
   LiqPayRequestSenderParams,
-} from '../params';
+} from './params';
 
 export interface LiqPayBaseRequestData
   extends
