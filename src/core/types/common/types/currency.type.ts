@@ -3,4 +3,4 @@
  *
  * __UK:__ Валюта платежу. Можливі значення: `USD`, `EUR`, `UAH`
  */
-export type LiqPayCurrency = 'USD' | 'EUR' | 'UAH';
+export type LiqPayCurrency = 'USD' | 'EUR' | 'UAH'

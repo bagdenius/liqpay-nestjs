@@ -4,7 +4,7 @@
  * __UK:__ Тип бонусу, можливі значення: `bonusplus`, `discount_club`, `personal`, `promo`
  */
 export type LiqPayBonusType =
-  | 'bonusplus'
-  | 'discount_club'
-  | 'personal'
-  | 'promo';
+	| 'bonusplus'
+	| 'discount_club'
+	| 'personal'
+	| 'promo'

@@ -20,11 +20,11 @@
  * - `status` - перевірка статусу платежу
  */
 export type LiqPayAction =
-  | 'pay'
-  | 'hold'
-  | 'paysplit'
-  | 'subscribe'
-  | 'paydonate'
-  | 'auth'
-  | 'regular'
-  | 'status';
+	| 'pay'
+	| 'hold'
+	| 'paysplit'
+	| 'subscribe'
+	| 'paydonate'
+	| 'auth'
+	| 'regular'
+	| 'status'

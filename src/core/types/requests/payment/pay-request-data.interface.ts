@@ -1,5 +1,5 @@
-import type { LiqPayBaseRequestData } from '.';
+import type { LiqPayBaseRequestData } from '.'
 
 export interface LiqPayPayRequestData extends LiqPayBaseRequestData {
-  action: 'pay' | 'hold' | 'paydonate';
+	action: 'pay' | 'hold' | 'paydonate'
 }

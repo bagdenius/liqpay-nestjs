@@ -3,4 +3,4 @@
  *
  * __UK:__ Платник еквайрингової комісії. Можливі значення: `sender`, `receiver`
  */
-export type LiqPayPaymentCommisionPayer = 'sender' | 'receiver';
+export type LiqPayPaymentCommisionPayer = 'sender' | 'receiver'

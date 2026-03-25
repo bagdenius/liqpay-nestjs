@@ -9,4 +9,4 @@
  * - `6` - емітент картки платника не підтримує технологію 3D-Secure
  * - `7` - операція пройшла без 3D-Secure
  */
-export type LiqPayMpiEci = 5 | 6 | 7;
+export type LiqPayMpiEci = 5 | 6 | 7

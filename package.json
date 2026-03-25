@@ -1,17 +1,29 @@
 {
-  "name": "liqpay-nestjs",
-  "description": "LiqPay integration module for NestJS with support for payments, callbacks, and configuration via DI.",
-  "module": "index.ts",
-  "version": "0.0.4",
-  "type": "module",
-  "author": "@bagdenius <bagdenius@gmail.com>",
-  "scripts": {
-    "build": "tsc ./src/index.ts"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  }
+	"name": "liqpay-nestjs",
+	"description": "LiqPay integration module for NestJS with support for payments, callbacks, and configuration via DI.",
+	"version": "0.0.4",
+	"type": "module",
+	"module": "src/index.ts",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"author": "@bagdenius <bagdenius@gmail.com>",
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"start:dev": "tsc -p tsconfig.build.json --watch",
+		"format": "prettier --write \"src/**/*.ts\""
+	},
+	"devDependencies": {
+		"@trivago/prettier-plugin-sort-imports": "^6.0.2",
+		"@types/bun": "latest",
+		"prettier": "^3.8.1"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	}
 }

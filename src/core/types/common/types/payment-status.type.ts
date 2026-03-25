@@ -4,9 +4,9 @@
  * __UK:__ Статус платежу
  */
 export type LiqPayPaymentStatus =
-  | LiqPayResolvedPaymentStatus
-  | LiqPayUnresolvedPaymentStatus
-  | LiqPayOtherPaymentStatus;
+	| LiqPayResolvedPaymentStatus
+	| LiqPayUnresolvedPaymentStatus
+	| LiqPayOtherPaymentStatus
 
 /**
  * __EN:__ Final payment statuses:
@@ -26,12 +26,12 @@ export type LiqPayPaymentStatus =
  * - `unsubscribed` - Підписка успішно деактивована
  */
 export type LiqPayResolvedPaymentStatus =
-  | 'error'
-  | 'failure'
-  | 'reversed'
-  | 'subscribed'
-  | 'success'
-  | 'unsubscribed';
+	| 'error'
+	| 'failure'
+	| 'reversed'
+	| 'subscribed'
+	| 'success'
+	| 'unsubscribed'
 
 /**
  * __EN:__ Statuses that require payment confirmation:
@@ -69,21 +69,21 @@ export type LiqPayResolvedPaymentStatus =
  * - `mp_verify` - Очікується завершення платежу в гаманці __MasterPass__
  */
 export type LiqPayUnresolvedPaymentStatus =
-  | '3ds_verify'
-  | 'captcha_verify'
-  | 'cvv_verify'
-  | 'ivr_verify'
-  | 'otp_verify'
-  | 'password_verify'
-  | 'phone_verify'
-  | 'pin_verify'
-  | 'receiver_verify'
-  | 'sender_verify'
-  | 'senderapp_verify'
-  | 'wait_qr'
-  | 'wait_sender'
-  | 'p24_verify'
-  | 'mp_verify';
+	| '3ds_verify'
+	| 'captcha_verify'
+	| 'cvv_verify'
+	| 'ivr_verify'
+	| 'otp_verify'
+	| 'password_verify'
+	| 'phone_verify'
+	| 'pin_verify'
+	| 'receiver_verify'
+	| 'sender_verify'
+	| 'senderapp_verify'
+	| 'wait_qr'
+	| 'wait_sender'
+	| 'p24_verify'
+	| 'mp_verify'
 
 /**
  * __EN:__ Other payment statuses
@@ -115,15 +115,15 @@ export type LiqPayUnresolvedPaymentStatus =
  * - `try_again` - Оплата неуспішна. Клієнт може повторити спробу ще раз
  */
 export type LiqPayOtherPaymentStatus =
-  | 'cash_wait'
-  | 'hold_wait'
-  | 'invoice_wait'
-  | 'prepared'
-  | 'processing'
-  | 'wait_accept'
-  | 'wait_card'
-  | 'wait_compensation'
-  | 'wait_lc'
-  | 'wait_reserve'
-  | 'wait_secure'
-  | 'try_again';
+	| 'cash_wait'
+	| 'hold_wait'
+	| 'invoice_wait'
+	| 'prepared'
+	| 'processing'
+	| 'wait_accept'
+	| 'wait_card'
+	| 'wait_compensation'
+	| 'wait_lc'
+	| 'wait_reserve'
+	| 'wait_secure'
+	| 'try_again'

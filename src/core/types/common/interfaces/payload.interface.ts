@@ -1,4 +1,4 @@
 export interface LiqPayPayload {
-  data: string;
-  signature: string;
+	data: string
+	signature: string
 }

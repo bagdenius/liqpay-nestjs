@@ -3,4 +3,4 @@
  *
  * __UK:__ Результат виконання запиту: `ok`, `error`
  */
-export type LiqPayResult = 'ok' | 'error';
+export type LiqPayResult = 'ok' | 'error'

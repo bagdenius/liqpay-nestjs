@@ -18,13 +18,13 @@
  * - `qr` - en: scanning a QR code, uk: сканування QR-коду
  */
 export type LiqPayPaymentMethod =
-  | 'apay'
-  | 'gpay'
-  | 'card'
-  | 'privat24'
-  | 'masterpass'
-  | 'moment_part'
-  | 'paypart'
-  | 'cash'
-  | 'invoice'
-  | 'qr';
+	| 'apay'
+	| 'gpay'
+	| 'card'
+	| 'privat24'
+	| 'masterpass'
+	| 'moment_part'
+	| 'paypart'
+	| 'cash'
+	| 'invoice'
+	| 'qr'

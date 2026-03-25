@@ -1,14 +1,15 @@
-import type { LiqPayMainParams, LiqPayProductParams } from '../../common';
+import type { LiqPayMainParams, LiqPayProductParams } from '../../common'
+
 import type {
-  LiqPayAdvancedParams,
-  LiqPayCheckoutParams,
-  LiqPayRequestSenderParams,
-} from './params';
+	LiqPayAdvancedParams,
+	LiqPayCheckoutParams,
+	LiqPayRequestSenderParams,
+} from './params'
 
 export interface LiqPayBaseRequestData
-  extends
-    LiqPayMainParams,
-    LiqPayCheckoutParams,
-    LiqPayRequestSenderParams,
-    LiqPayProductParams,
-    LiqPayAdvancedParams {}
+	extends
+		LiqPayMainParams,
+		LiqPayCheckoutParams,
+		LiqPayRequestSenderParams,
+		LiqPayProductParams,
+		LiqPayAdvancedParams {}

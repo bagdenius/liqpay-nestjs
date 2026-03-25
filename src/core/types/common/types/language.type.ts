@@ -3,4 +3,4 @@
  *
  * __UK:__ Мова клієнта: `uk`, `en`
  */
-export type LiqPayLanguage = 'uk' | 'en';
+export type LiqPayLanguage = 'uk' | 'en'
