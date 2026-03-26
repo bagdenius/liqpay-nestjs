@@ -1,5 +1,3 @@
-export * from './interfaces'
-export * from './liqpay.constants'
 export * from './liqpay.module'
 export * from './liqpay.providers'
 export * from './liqpay.service'
