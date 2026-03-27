@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { LiqPayUnitSchema } from './enums'
+
 export const LiqPayTaxRates = {
 	NO_VAT: { letter: 'А', name: 'Без ПДВ 0%', type: 0, prc: 0 },
 	VAT20: { letter: 'Б', name: 'ПДВ 20%', type: 0, prc: 20 },
@@ -34,7 +36,7 @@ export const LiqPayFiscalProductByApiSchema = z.object({
 	price: z.number(),
 	categoryname: z.string(),
 	name: z.string(),
-	unitcode: z.string(),
+	unitcode: LiqPayUnitSchema,
 	barcode: z.string().optional(),
 	codifier: z.string().optional(),
 	vndcode: z.string().optional(),

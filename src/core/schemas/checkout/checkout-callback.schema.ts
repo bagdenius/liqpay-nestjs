@@ -1,16 +1,20 @@
+import { objectToCamel } from 'ts-case-convert'
 import { z } from 'zod'
 
+import { toBoolean } from '../../utils'
+import { LiqPayBaseSchema } from '../base'
 import {
 	LiqPayActionSchema,
 	LiqPayCurrencySchema,
+	LiqPayErrorCodeSchema,
 	LiqPayMpiEciSchema,
 	LiqPayPaymentStatusSchema,
 	LiqPayPaytypeSchema,
 } from '../common/enums'
 
-export const LiqPayCheckoutCallbackSchema = z.object({
+export const LiqPayRawCheckoutCallbackSchema = LiqPayBaseSchema.extend({
 	acq_id: z.number(),
-	action: LiqPayActionSchema,
+	action: z.string(),
 	agent_commission: z.number(),
 	amount: z.number(),
 	amount_bonus: z.number(),
@@ -23,9 +27,9 @@ export const LiqPayCheckoutCallbackSchema = z.object({
 	commission_debit: z.number(),
 	completion_date: z.string(),
 	create_date: z.string(),
-	currency: LiqPayCurrencySchema,
-	currency_credit: LiqPayCurrencySchema,
-	currency_debit: LiqPayCurrencySchema,
+	currency: z.string(),
+	currency_credit: z.string(),
+	currency_debit: z.string(),
 	customer: z.string().max(100),
 	description: z.string(),
 	end_date: z.string(),
@@ -33,13 +37,12 @@ export const LiqPayCheckoutCallbackSchema = z.object({
 	err_description: z.string(),
 	info: z.string(),
 	ip: z.string(),
-	is_3ds: z.boolean(),
+	is_3ds: z.union([z.string(), z.boolean()]),
 	liqpay_order_id: z.string(),
-	mpi_eci: LiqPayMpiEciSchema,
+	mpi_eci: z.number(),
 	order_id: z.string(),
 	payment_id: z.number(),
-	paytype: LiqPayPaytypeSchema,
-	public_key: z.string(),
+	paytype: z.string(),
 	receiver_commission: z.number(),
 	redirect_to: z.string(),
 	refund_date_last: z.string(),
@@ -55,19 +58,44 @@ export const LiqPayCheckoutCallbackSchema = z.object({
 	sender_first_name: z.string(),
 	sender_last_name: z.string(),
 	sender_phone: z.string(),
-	status: LiqPayPaymentStatusSchema,
-	wait_reserve_status: z.literal('true').optional(),
+	status: z.string(),
+	wait_reserve_status: z.union([z.string(), z.boolean()]),
 	token: z.string(),
 	type: z.string(),
-	version: z.literal(7),
 	err_erc: z.string(),
 	product_category: z.string(),
 	product_description: z.string(),
 	product_name: z.string(),
 	product_url: z.string(),
 	refund_amount: z.number(),
-	verifycode: z.literal('Y').optional(),
+	verifycode: z.string().optional(),
 })
+
+export type LiqPayRawCheckoutCallback = z.infer<
+	typeof LiqPayRawCheckoutCallbackSchema
+>
+
+export const LiqPayCheckoutCallbackSchema =
+	LiqPayRawCheckoutCallbackSchema.transform(raw => {
+		const camelized = objectToCamel(raw)
+		return {
+			...camelized,
+			action: LiqPayActionSchema.parse(camelized.action),
+			completionDate: toDate(camelized.completionDate),
+			createDate: toDate(camelized.createDate),
+			currency: LiqPayCurrencySchema.parse(camelized.currency),
+			currencyCredit: LiqPayCurrencySchema.parse(camelized.currencyCredit),
+			currencyDebit: LiqPayCurrencySchema.parse(camelized.currencyDebit),
+			endDate: toDate(camelized.endDate),
+			errorCode: LiqPayErrorCodeSchema.parse(camelized.errCode),
+			is3DSecure: toBoolean(camelized.is3ds),
+			mpiEci: LiqPayMpiEciSchema.parse(camelized.mpiEci),
+			paytype: LiqPayPaytypeSchema.parse(camelized.paytype),
+			refundDateLast: toDate(camelized.refundDateLast),
+			status: LiqPayPaymentStatusSchema.parse(camelized.status),
+			waitReserveStatus: toBoolean(camelized.waitReserveStatus),
+		}
+	})
 
 export type LiqPayCheckoutCallback = z.infer<
 	typeof LiqPayCheckoutCallbackSchema

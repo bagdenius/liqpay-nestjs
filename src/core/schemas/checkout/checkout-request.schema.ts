@@ -1,5 +1,6 @@
 import z from 'zod'
 
+import { LiqPayBaseSchema } from '../base'
 import {
 	LiqPayDetailAddendaSchema,
 	LiqPayFiscalDataSchema,
@@ -13,7 +14,7 @@ import {
 	LiqPaySubscribePeriodicitySchema,
 } from '../common/enums'
 
-export const LiqPayCheckoutRequestSchema = z.object({
+export const LiqPayCheckoutRequestSchema = LiqPayBaseSchema.extend({
 	// MAIN PARAMS
 	version: z.literal(7),
 	public_key: z.string(),
@@ -23,7 +24,7 @@ export const LiqPayCheckoutRequestSchema = z.object({
 	description: z.string(),
 	order_id: z.string().max(255),
 	rro_info: LiqPayFiscalDataSchema.optional(),
-	expired_date: z.string().optional(), // todo: strenghten with regex
+	expired_date: z.date().optional(),
 	language: LiqPayLanguageSchema.optional(),
 	paytypes: z.array(LiqPayPaytypeSchema).optional(),
 	result_url: z.string().max(510).optional(),
@@ -41,7 +42,7 @@ export const LiqPayCheckoutRequestSchema = z.object({
 
 	// SUBSCRIPTION PARAMS
 	subscribe: z.literal('1').optional(),
-	subscribe_date_start: z.string().optional(),
+	subscribe_date_start: z.date().optional(),
 	subscribe_periodicity: LiqPaySubscribePeriodicitySchema.optional(),
 
 	// ONE CLICK PAYMENT PARAMS

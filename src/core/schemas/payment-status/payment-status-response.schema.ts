@@ -1,5 +1,8 @@
+import { objectToCamel, objectToSnake } from 'ts-case-convert'
 import { z } from 'zod'
 
+import { toBoolean } from '../../utils'
+import { LiqPayBaseSchema } from '../base'
 import {
 	LiqPayActionSchema,
 	LiqPayBonusTypeSchema,
@@ -11,9 +14,9 @@ import {
 	LiqPayRequestResultSchema,
 } from '../common/enums'
 
-export const LiqPayPaymentStatusResponseSchema = z.object({
+export const LiqPayRawPaymentStatusResponseSchema = LiqPayBaseSchema.extend({
 	acq_id: z.number(),
-	action: LiqPayActionSchema,
+	action: z.string(),
 	agent_commission: z.number(),
 	amount: z.number(),
 	amount_bonus: z.number(),
@@ -22,30 +25,29 @@ export const LiqPayPaymentStatusResponseSchema = z.object({
 	authcode_credit: z.string(),
 	authcode_debit: z.string(),
 	bonus_procent: z.number(),
-	bonus_type: LiqPayBonusTypeSchema,
+	bonus_type: z.string(),
 	card_token: z.string(),
 	commission_credit: z.number(),
 	commission_debit: z.number(),
 	confirm_phone: z.string(),
 	create_date: z.string(),
-	currency: LiqPayCurrencySchema,
-	currency_credit: LiqPayCurrencySchema,
-	currency_debit: LiqPayCurrencySchema,
+	currency: z.string(),
+	currency_credit: z.string(),
+	currency_debit: z.string(),
 	description: z.string(),
 	end_date: z.string(),
 	info: z.string(),
 	ip: z.string(),
-	is_3ds: z.boolean(),
-	language: LiqPayLanguageSchema,
+	is_3ds: z.union([z.string(), z.boolean()]),
+	language: z.string(),
 	liqpay_order_id: z.string(),
 	moment_part: z.string(),
-	mpi_eci: LiqPayMpiEciSchema,
+	mpi_eci: z.number(),
 	order_id: z.string(),
 	payment_id: z.number(),
-	paytype: LiqPayPaytypeSchema,
-	public_key: z.string(),
+	paytype: z.string(),
 	receiver_commission: z.number(),
-	result: LiqPayRequestResultSchema,
+	result: z.string(),
 	rrn_credit: z.string(),
 	rrn_debit: z.string(),
 	sender_bonus: z.number(),
@@ -58,13 +60,36 @@ export const LiqPayPaymentStatusResponseSchema = z.object({
 	sender_first_name: z.string(),
 	sender_last_name: z.string(),
 	sender_phone: z.string(),
-	status: LiqPayPaymentStatusSchema,
-	wait_reserve_status: z.literal('true').optional(),
+	status: z.string(),
+	wait_reserve_status: z.union([z.string(), z.boolean()]),
 	transaction_id: z.number(),
 	type: z.string(),
-	version: z.literal(7),
+	version: z.number(),
 })
 
-export type LiqPayPaymentStatusResponse = z.infer<
-	typeof LiqPayPaymentStatusResponseSchema
+export type LiqPayRawPaymentStatusResponse = z.infer<
+	typeof LiqPayRawPaymentStatusResponseSchema
 >
+
+export const LiqPayPaymentStatusResponseSchema =
+	LiqPayRawPaymentStatusResponseSchema.transform(raw => {
+		const camelized = objectToCamel(raw)
+		return {
+			...camelized,
+			action: LiqPayActionSchema.parse(camelized.action),
+			bonusType: LiqPayBonusTypeSchema.parse(camelized.bonusType),
+			createDate: toDate(camelized.createDate),
+			currency: LiqPayCurrencySchema.parse(camelized.currency),
+			currencyCredit: LiqPayCurrencySchema.parse(camelized.currencyCredit),
+			currencyDebit: LiqPayCurrencySchema.parse(camelized.currencyDebit),
+			endDate: toDate(camelized.endDate),
+			is3DSecure: toBoolean(camelized.is3ds),
+			language: LiqPayLanguageSchema.parse(camelized.language),
+			momentPart: toBoolean(camelized.momentPart),
+			mpiEci: LiqPayMpiEciSchema.parse(camelized.mpiEci),
+			paytype: LiqPayPaytypeSchema.parse(camelized.paytype),
+			result: LiqPayRequestResultSchema.parse(camelized.result),
+			status: LiqPayPaymentStatusSchema.parse(camelized.status),
+			waitReserveStatus: toBoolean(camelized.waitReserveStatus),
+		}
+	})

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { LiqPayErrorCodeSchema } from './error-code.schema'
+import { LiqPayErrorCodeSchema } from '../common/enums'
 
 export const LiqPayErrorResponseSchema = z.object({
 	status: z.literal('error'),
