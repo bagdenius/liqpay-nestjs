@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common'
 
 import { LiqPayClient } from '../core/liqpay.client'
 import { LiqPayCheckoutRequest } from '../core/schemas/checkout'
-import { LiqPayPaymentStatusRequest } from '../core/schemas/payment-status'
 
 import { LIQPAY_OPTIONS } from './constants'
 import type { LiqPayOptions } from './interfaces'

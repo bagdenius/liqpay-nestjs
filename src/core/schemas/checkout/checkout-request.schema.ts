@@ -18,7 +18,7 @@ import {
 export const LiqPayCheckoutRequestSchema = z.object({
 	// MAIN PARAMS
 	version: LiqPayVersionSchema,
-	publicKey: z.string(),
+	publicKey: z.string().optional(),
 	action: LiqPayActionSchema,
 	amount: z.number().positive(),
 	currency: LiqPayCurrencySchema,

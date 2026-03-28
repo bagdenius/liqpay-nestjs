@@ -1,20 +1,22 @@
-import { createHash } from 'node:crypto'
+import { createHash, timingSafeEqual } from 'node:crypto'
 import z from 'zod'
 
 import { LIQPAY_CHECKOUT_URL, LIQPAY_REQUEST_URL } from './constants'
 import {
+	LiqPayCallResult,
 	LiqPayEnvelope,
 	LiqPayRawRequest,
-	LiqPayRawResponse,
 	LiqPayRequest,
 	LiqPayResponse,
 } from './schemas/base'
 import {
+	LiqPayCheckoutCallback,
+	LiqPayCheckoutCallbackSchema,
 	type LiqPayCheckoutRequest,
 	LiqPayRawCheckoutRequestSchema,
 } from './schemas/checkout'
+import { LiqPayError, LiqPayErrorResponseSchema } from './schemas/error'
 import {
-	type LiqPayPaymentStatusRequest,
 	LiqPayPaymentStatusResponse,
 	LiqPayPaymentStatusResponseSchema,
 	LiqPayRawPaymentStatusRequestSchema,
@@ -74,7 +76,7 @@ export class LiqPayClient {
 		return Buffer.from(JSON.stringify(data)).toString('base64')
 	}
 
-	private decodeData<T extends LiqPayRawResponse>(encodedData: string): T {
+	private decodeData(encodedData: string): unknown {
 		return JSON.parse(Buffer.from(encodedData, 'base64').toString('utf-8'))
 	}
 
@@ -84,7 +86,7 @@ export class LiqPayClient {
 	}
 
 	private getCredentials(data: LiqPayRawRequest): LiqPayEnvelope {
-		const payload = { ...data, public_key: this.publicKey }
+		const payload: LiqPayRawRequest = { ...data, public_key: this.publicKey }
 		const encoded = this.encodeData(payload)
 		const signature = this.createSignature(encoded)
 		return { data: encoded, signature }
@@ -92,7 +94,50 @@ export class LiqPayClient {
 
 	private isValidSignature(envelope: LiqPayEnvelope): boolean {
 		const expected = this.createSignature(envelope.data)
-		return expected === envelope.signature
+		const a = Buffer.from(expected)
+		const b = Buffer.from(envelope.signature)
+		if (a.length !== b.length) return false
+		return timingSafeEqual(a, b)
+	}
+
+	private createError(
+		code: LiqPayError['code'],
+		description: string,
+	): LiqPayCallResult<never> {
+		return { data: null, error: { code, description } }
+	}
+
+	private parseData<T>(
+		schema: z.ZodType<T>,
+		data: unknown,
+	): LiqPayCallResult<T> {
+		const error = this.parseError(data)
+		if (error) return error
+		const parsed = schema.safeParse(data)
+		if (!parsed.success)
+			return this.createError('validation_error', 'Invalid response schema')
+		return { data: parsed.data, error: null }
+	}
+
+	private parseError(data: unknown): LiqPayCallResult<never> | null {
+		const parsed = LiqPayErrorResponseSchema.safeParse(data)
+		if (!parsed.success) return null
+		return this.createError(parsed.data.err_code, parsed.data.err_description)
+	}
+
+	private parseEnvelope<TResponse extends LiqPayResponse>(
+		envelope: LiqPayEnvelope,
+		schema: z.ZodType<TResponse>,
+	): LiqPayCallResult<TResponse> {
+		if (!this.isValidSignature(envelope))
+			return this.createError('invalid_signature', 'Invalid signature')
+		let rawData: unknown
+		try {
+			rawData = this.decodeData(envelope.data)
+		} catch {
+			return this.createError('decode_error', 'Failed to decode base64 data')
+		}
+		return this.parseData(schema, rawData)
 	}
 
 	private async call<
@@ -104,28 +149,33 @@ export class LiqPayClient {
 		rawSchema: z.ZodType<TRawRequest>,
 		responseSchema: z.ZodType<TResponse>,
 		url: string,
-	): Promise<TResponse> {
+	): Promise<LiqPayCallResult<TResponse>> {
 		const raw = rawSchema.parse(payload)
 		const envelope = this.getCredentials(raw)
-		const res = await fetch(url, {
+		const response = await fetch(url, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: new URLSearchParams(envelope),
 		})
-		const rawData = await res.json()
-		return responseSchema.parse(rawData)
+		if (!response.ok)
+			return this.createError('http_error', `HTTP ${response.status}`)
+		let rawData: unknown
+		try {
+			rawData = await response.json()
+		} catch {
+			return this.createError(
+				'invalid_response',
+				'Failed to parse JSON response',
+			)
+		}
+		return this.parseData(responseSchema, rawData)
 	}
 
 	public async getPaymentStatus(
 		orderId: string,
-	): Promise<LiqPayPaymentStatusResponse> {
+	): Promise<LiqPayCallResult<LiqPayPaymentStatusResponse>> {
 		return await this.call(
-			{
-				version: 7,
-				publicKey: this.publicKey,
-				action: 'status',
-				orderId,
-			},
+			{ version: 7, action: 'status', orderId },
 			LiqPayRawPaymentStatusRequestSchema,
 			LiqPayPaymentStatusResponseSchema,
 			LIQPAY_REQUEST_URL,
@@ -153,5 +203,11 @@ export class LiqPayClient {
         <sdk-button label="${buttonText}" background="${buttonColor}" onClick="submit()"></sdk-button>
       </form>
     `
+	}
+
+	public parseCheckoutCallback(
+		envelope: LiqPayEnvelope,
+	): LiqPayCallResult<LiqPayCheckoutCallback> {
+		return this.parseEnvelope(envelope, LiqPayCheckoutCallbackSchema)
 	}
 }

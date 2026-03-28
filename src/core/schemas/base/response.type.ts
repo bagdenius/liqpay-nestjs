@@ -1,4 +1,5 @@
 import { LiqPayCheckoutCallback, LiqPayRawCheckoutCallback } from '../checkout'
+import { LiqPayErrorResponse } from '../error'
 import {
 	LiqPayPaymentStatusResponse,
 	LiqPayRawPaymentStatusResponse,
@@ -11,3 +12,8 @@ export type LiqPayResponse =
 export type LiqPayRawResponse =
 	| LiqPayRawCheckoutCallback
 	| LiqPayRawPaymentStatusResponse
+	| LiqPayErrorResponse
+
+export type LiqPayCallResult<T> =
+	| { data: T; error?: null }
+	| { data: null; error: { code: string; description: string } }

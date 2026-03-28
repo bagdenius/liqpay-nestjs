@@ -5,7 +5,7 @@ import { LiqPayActionSchema, LiqPayVersionSchema } from '../common/enums'
 
 export const LiqPayPaymentStatusRequestSchema = z.object({
 	version: LiqPayVersionSchema,
-	publicKey: z.string(),
+	publicKey: z.string().optional(),
 	action: LiqPayActionSchema,
 	orderId: z.string().max(255),
 })
