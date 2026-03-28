@@ -7,7 +7,7 @@ export const LiqPayDetailAddendaSchema = z.object({
 	flightNumber: z.string().max(5),
 	originCity: z.string().max(5),
 	destinationCity: z.string().max(5),
-	departureDate: z.string().max(6), // todo: strengthen with regex
+	departureDate: z.string().max(6),
 })
 
 export type LiqPayDetailAddenda = z.infer<typeof LiqPayDetailAddendaSchema>

@@ -1,6 +1,6 @@
+import { objectToSnake } from 'ts-case-convert'
 import z from 'zod'
 
-import { LiqPayBaseSchema } from '../base'
 import {
 	LiqPayDetailAddendaSchema,
 	LiqPayFiscalDataSchema,
@@ -12,51 +12,81 @@ import {
 	LiqPayLanguageSchema,
 	LiqPayPaytypeSchema,
 	LiqPaySubscribePeriodicitySchema,
+	LiqPayVersionSchema,
 } from '../common/enums'
 
-export const LiqPayCheckoutRequestSchema = LiqPayBaseSchema.extend({
+export const LiqPayCheckoutRequestSchema = z.object({
 	// MAIN PARAMS
-	version: z.literal(7),
-	public_key: z.string(),
+	version: LiqPayVersionSchema,
+	publicKey: z.string(),
 	action: LiqPayActionSchema,
 	amount: z.number().positive(),
 	currency: LiqPayCurrencySchema,
 	description: z.string(),
-	order_id: z.string().max(255),
-	rro_info: LiqPayFiscalDataSchema.optional(),
-	expired_date: z.date().optional(),
+	orderId: z.string().max(255),
+	rroInfo: LiqPayFiscalDataSchema.optional(),
+	expiredDate: z.date().optional(),
 	language: LiqPayLanguageSchema.optional(),
 	paytypes: z.array(LiqPayPaytypeSchema).optional(),
-	result_url: z.string().max(510).optional(),
-	server_url: z.string().max(510).optional(),
+	resultUrl: z.string().max(510).optional(),
+	serverUrl: z.string().max(510).optional(),
 	verifycode: z.literal('Y').optional(),
-	split_rules: z.array(LiqPaySplitRuleSchema).optional(),
+	splitRules: z.array(LiqPaySplitRuleSchema).optional(),
 
 	// SENDER PARAMS
-	sender_address: z.string().optional(),
-	sender_city: z.string().optional(),
-	sender_country_code: z.string().optional(),
-	sender_first_name: z.string().optional(),
-	sender_last_name: z.string().optional(),
-	sender_postal_code: z.string().optional(),
+	senderAddress: z.string().optional(),
+	senderCity: z.string().optional(),
+	senderCountryCode: z.string().optional(),
+	senderFirstName: z.string().optional(),
+	senderLastName: z.string().optional(),
+	senderPostalCode: z.string().optional(),
 
 	// SUBSCRIPTION PARAMS
 	subscribe: z.literal('1').optional(),
-	subscribe_date_start: z.date().optional(),
-	subscribe_periodicity: LiqPaySubscribePeriodicitySchema.optional(),
+	subscribeDateStart: z.date().optional(),
+	subscribePeriodicity: LiqPaySubscribePeriodicitySchema.optional(),
 
 	// ONE CLICK PAYMENT PARAMS
 	customer: z.string().max(100).optional(),
 	recurringbytoken: z.literal('1').optional(),
-	customer_user_id: z.string().optional(),
+	customerUserId: z.string().optional(),
 
 	// OTHER PARAMS
 	dae: LiqPayDetailAddendaSchema.optional(),
 	info: z.string().optional(),
-	product_category: z.string().max(25).optional(),
-	product_description: z.string().max(500).optional(),
-	product_name: z.string().max(100).optional(),
-	product_url: z.string().max(510).optional(),
+	productCategory: z.string().max(25).optional(),
+	productDescription: z.string().max(500).optional(),
+	productName: z.string().max(100).optional(),
+	productUrl: z.string().max(510).optional(),
 })
-
 export type LiqPayCheckoutRequest = z.infer<typeof LiqPayCheckoutRequestSchema>
+
+export const LiqPayRawCheckoutRequestSchema =
+	LiqPayCheckoutRequestSchema.transform(typed => {
+		const snakelized = objectToSnake(typed)
+		return {
+			...snakelized,
+			version: Number(snakelized.version),
+			action: String(snakelized.action),
+			currency: String(snakelized.currency),
+			expired_date:
+				snakelized.expired_date && snakelized.expired_date.toISOString(),
+			language: snakelized.language && String(snakelized.language),
+			paytypes: snakelized.paytypes && snakelized.paytypes.join(','),
+			verifycode: snakelized.verifycode && String(snakelized.verifycode),
+			split_rules:
+				snakelized.split_rules && JSON.stringify(snakelized.split_rules),
+			subscribe_date_start:
+				snakelized.subscribe_date_start &&
+				snakelized.subscribe_date_start.toISOString(),
+			subscribe_periodicity:
+				snakelized.subscribe_periodicity &&
+				String(snakelized.subscribe_periodicity),
+			recurringbytoken:
+				snakelized.recurringbytoken && String(snakelized.recurringbytoken),
+			dae: snakelized.dae && JSON.stringify(snakelized.dae),
+		}
+	})
+export type LiqPayRawCheckoutRequest = z.infer<
+	typeof LiqPayRawCheckoutRequestSchema
+>
