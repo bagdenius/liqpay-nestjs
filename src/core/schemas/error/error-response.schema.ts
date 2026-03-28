@@ -7,5 +7,4 @@ export const LiqPayErrorResponseSchema = z.object({
 	err_code: LiqPayErrorCodeSchema,
 	err_description: z.string(),
 })
-
 export type LiqPayErrorResponse = z.infer<typeof LiqPayErrorResponseSchema>

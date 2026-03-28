@@ -1,14 +1,17 @@
-import axios from 'axios'
 import { createHash } from 'node:crypto'
 
-import { API_BASE_URL, CHECKOUT_URL } from './constants'
+import { LIQPAY_CHECKOUT_URL, LIQPAY_REQUEST_URL } from './constants'
 import { LiqPayEnvelope } from './schemas/base'
-import { type LiqPayCheckoutRequest } from './schemas/checkout'
-import { type LiqPayPaymentStatusRequest } from './schemas/payment-status'
-
-// TODO: add validations
-// TODO: reconsider api call method
-// TODO: reconsider and think over the structure on request and response types
+import {
+	type LiqPayCheckoutRequest,
+	LiqPayRawCheckoutRequestSchema,
+} from './schemas/checkout'
+import {
+	type LiqPayPaymentStatusRequest,
+	LiqPayPaymentStatusResponse,
+	LiqPayPaymentStatusResponseSchema,
+	LiqPayRawPaymentStatusRequestSchema,
+} from './schemas/payment-status'
 
 /**
  * workflow:
@@ -45,96 +48,84 @@ import { type LiqPayPaymentStatusRequest } from './schemas/payment-status'
  * 3) maps encoded data to typed data
  * 4) validates typed data
  * 5) returns typed data to user
+ *
+ * For request build envelope with:
+ * 1) data - stringified json encoded with base64
+ * 2) signature - encoded base64(sha3-256(privateKey+data+privateKey))
  */
 
 /**
  * Client for easy interaction with LiqPay API
  */
 export class LiqPayClient {
-	public constructor(
+	constructor(
 		private readonly publicKey: string,
 		private readonly privateKey: string,
 	) {}
 
-	// data must have public key when encoding so it will called only from client
-	private encodeData(data: object): string {
+	private encodeData(data: any): string {
 		return Buffer.from(JSON.stringify(data)).toString('base64')
 	}
 
-	private decodeData<T = any>(encoded: string): T {
-		return JSON.parse(Buffer.from(encoded, 'base64').toString('utf-8'))
+	private decodeData(encodedData: string) {
+		return JSON.parse(Buffer.from(encodedData, 'base64').toString('utf-8'))
 	}
 
-	public getCredentials(
-		params: LiqPayCheckoutRequest | LiqPayPaymentStatusRequest,
-	): LiqPayEnvelope {
-		const payload = { ...params, public_key: this.publicKey }
-		const data = this.encodeData(payload)
-		const signature = this.createSignature(data)
-		return { data, signature }
-	}
-
-	public createSignature(data: string): string {
-		const signatureString = `${this.privateKey}${data}${this.privateKey}`
+	private createSignature(encodedData: string): string {
+		const signatureString = `${this.privateKey}${encodedData}${this.privateKey}`
 		return createHash('sha3-256').update(signatureString).digest('base64')
 	}
 
-	private async call<TResponse = any>(
-		params: LiqPayCheckoutRequest | LiqPayPaymentStatusRequest,
-		path: string = 'request',
-	): Promise<TResponse> {
-		const credentials = this.getCredentials(params)
+	private getCredentials(data: any): LiqPayEnvelope {
+		const payload = { ...data, public_key: this.publicKey }
+		const encoded = this.encodeData(payload)
+		const signature = this.createSignature(data)
+		return { data: encoded, signature }
+	}
 
-		const formData = new URLSearchParams()
-		formData.append('data', credentials.data)
-		formData.append('signature', credentials.signature)
+	private isValidSignature(envelope: LiqPayEnvelope): boolean {
+		const expected = this.createSignature(envelope.data)
+		return expected === envelope.signature
+	}
 
-		const url = `${API_BASE_URL.replace(/\/$/, '')}/${path.replace(/^\//, '')}`
+	private async call() {
+		throw new Error('call is not implemented')
+	}
 
-		const { data, status } = await axios.post(url, formData, {
+	public async getPaymentStatus(
+		payload: LiqPayPaymentStatusRequest,
+	): Promise<LiqPayPaymentStatusResponse> {
+		const raw = LiqPayRawPaymentStatusRequestSchema.parse(payload)
+		const envelope = this.getCredentials(raw)
+		const response = await fetch(LIQPAY_REQUEST_URL, {
+			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: new URLSearchParams(envelope),
 		})
-
-		if (status !== 200)
-			throw new Error(`Request failed with status code: ${status}`)
-
-		const decoded = this.decodeData<TResponse>(data.data)
-		return decoded
+		const rawData = await response.json()
+		return LiqPayPaymentStatusResponseSchema.parse(rawData)
 	}
 
-	public getCheckoutUrl(params: LiqPayCheckoutRequest): string {
-		const { data, signature } = this.getCredentials(params)
-		return `${CHECKOUT_URL}?data=${data}&signature=${signature}`
+	public getCheckoutUrl(payload: LiqPayCheckoutRequest): string {
+		const raw = LiqPayRawCheckoutRequestSchema.parse(payload)
+		const { data, signature } = this.getCredentials(raw)
+		return `${LIQPAY_CHECKOUT_URL}?data=${data}&signature=${signature}`
 	}
 
-	public getCheckoutForm(
-		params: LiqPayCheckoutRequest,
+	public getCheckoutFormButton(
+		payload: LiqPayCheckoutRequest,
 		buttonText: string = 'Pay',
 		buttonColor: string = '#77CC5D',
 	): string {
-		const { data, signature } = this.getCredentials(params)
+		const raw = LiqPayRawCheckoutRequestSchema.parse(payload)
+		const { data, signature } = this.getCredentials(raw)
 		return `
-      <form method="POST" action="${CHECKOUT_URL}" accept-charset="utf-8">
+      <form method="POST" action="${LIQPAY_CHECKOUT_URL}" accept-charset="utf-8">
         <input type="hidden" name="data" value="${data}" />
         <input type="hidden" name="signature" value="${signature}" />
         <script type="text/javascript" src="https://static.liqpay.ua/libjs/sdk_button.js"></script>
         <sdk-button label="${buttonText}" background="${buttonColor}" onClick="submit()"></sdk-button>
       </form>
     `
-	}
-
-	public async getPaymentStatus(orderId: string) {
-		const request: LiqPayPaymentStatusRequest = {
-			version: 7,
-			action: 'status',
-			order_id: orderId,
-			public_key: this.publicKey,
-		}
-		return await this.call(request)
-	}
-
-	public isValidSignature(response: LiqPayEnvelope): boolean {
-		const expected = this.createSignature(response.data)
-		return expected === response.signature
 	}
 }

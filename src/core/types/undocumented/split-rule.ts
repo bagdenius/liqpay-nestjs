@@ -1,3 +1,7 @@
+import { LiqPayFiscalData } from '../../schemas/common'
+
+import { LiqPayCommisionPayer } from './types'
+
 export interface LiqPaySplitRule {
 	public_key: string
 	amount: number
