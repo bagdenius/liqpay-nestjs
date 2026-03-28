@@ -1,0 +1,10 @@
+import { LiqPayClient } from '../../core/clients'
+import { LiqPayEnvelope } from '../../core/types/base'
+
+export class LiqPayWebhooksService {
+	public constructor(private readonly client: LiqPayClient) {}
+
+	public async parseCheckoutCallback(envelope: LiqPayEnvelope) {
+		return this.client.webhooks.parseCheckoutCallback(envelope)
+	}
+}

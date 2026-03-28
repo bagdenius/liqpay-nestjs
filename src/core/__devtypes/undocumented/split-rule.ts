@@ -1,4 +1,4 @@
-import { LiqPayFiscalData } from '../../schemas/common'
+import { LiqPayFiscalData } from '../../types/common'
 
 import { LiqPayCommisionPayer } from './types'
 

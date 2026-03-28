@@ -1,4 +1,4 @@
-import { LiqPayCallResult } from '../schemas/base'
+import { LiqPayCallResult } from '../types/base'
 
 export function isSuccess<T>(
 	res: LiqPayCallResult<T>,
