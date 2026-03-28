@@ -117,10 +117,15 @@ export class LiqPayClient {
 	}
 
 	public async getPaymentStatus(
-		payload: LiqPayPaymentStatusRequest,
+		orderId: string,
 	): Promise<LiqPayPaymentStatusResponse> {
 		return await this.call(
-			payload,
+			{
+				version: 7,
+				publicKey: this.publicKey,
+				action: 'status',
+				orderId,
+			},
 			LiqPayRawPaymentStatusRequestSchema,
 			LiqPayPaymentStatusResponseSchema,
 			LIQPAY_REQUEST_URL,
