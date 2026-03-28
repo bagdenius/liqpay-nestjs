@@ -1,3 +1,6 @@
+# temporarary disable github actions
+..github
+
 # dependencies (bun install)
 node_modules
 
