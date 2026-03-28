@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { env } from 'node:process'
 
 import { LiqPayClient } from '../core/liqpay.client'
+import { LiqPayEnvelope } from '../core/schemas/base'
 import { LiqPayCheckoutRequest } from '../core/schemas/checkout'
 
 import { LIQPAY_OPTIONS } from './constants'
@@ -15,7 +17,7 @@ export class LiqpayService {
 
 	private readonly client: LiqPayClient
 
-	constructor(
+	public constructor(
 		@Inject(LIQPAY_OPTIONS)
 		private readonly options: LiqPayOptions,
 	) {
@@ -27,7 +29,7 @@ export class LiqpayService {
 		this.client = new LiqPayClient(this.publicKey, this.privateKey)
 	}
 
-	getCheckoutUrl(payload: LiqPayCheckoutRequest): string {
+	public getCheckoutUrl(payload: LiqPayCheckoutRequest): string {
 		return this.client.getCheckoutUrl({
 			...payload,
 			resultUrl: payload.resultUrl ?? this.resultUrl,
@@ -35,7 +37,7 @@ export class LiqpayService {
 		})
 	}
 
-	getCheckoutForm(
+	public getCheckoutForm(
 		payload: LiqPayCheckoutRequest,
 		buttonText?: string,
 		buttonColor?: string,
@@ -51,7 +53,11 @@ export class LiqpayService {
 		)
 	}
 
-	async getPaymentStatus(orderId: string) {
+	public async getPaymentStatus(orderId: string) {
 		return this.client.getPaymentStatus(orderId)
+	}
+
+	public async parseCheckoutCallback(envelope: LiqPayEnvelope) {
+		return this.client.parseCheckoutCallback(envelope)
 	}
 }
