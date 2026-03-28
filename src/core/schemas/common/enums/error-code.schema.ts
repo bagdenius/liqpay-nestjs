@@ -118,5 +118,4 @@ export const LiqPayErrorCodeSchema = z.enum([
 	'9961',
 	'9989',
 ])
-
 export type LiqPayErrorCode = z.infer<typeof LiqPayErrorCodeSchema>

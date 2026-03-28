@@ -10,5 +10,4 @@ export const LiqPayActionSchema = z.enum([
 	'regular',
 	'status',
 ])
-
 export type LiqPayAction = z.infer<typeof LiqPayActionSchema>

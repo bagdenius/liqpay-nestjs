@@ -1,3 +1,4 @@
+export * from './core/schemas/base'
 export * from './core/schemas/checkout'
 export * from './core/schemas/common'
 export * from './core/schemas/common/enums'

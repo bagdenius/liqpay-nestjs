@@ -5,5 +5,4 @@ export const LiqPayMpiEciSchema = z.union([
 	z.literal(6),
 	z.literal(7),
 ])
-
 export type LiqPayMpiEci = z.infer<typeof LiqPayMpiEciSchema>

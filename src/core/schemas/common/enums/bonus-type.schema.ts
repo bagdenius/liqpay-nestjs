@@ -6,5 +6,4 @@ export const LiqPayBonusTypeSchema = z.enum([
 	'personal',
 	'promo',
 ])
-
 export type LiqPayBonusType = z.infer<typeof LiqPayBonusTypeSchema>

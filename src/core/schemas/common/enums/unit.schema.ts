@@ -52,7 +52,5 @@ export enum LiqPayUnitEnum {
 	minute = '10046',
 	milliliter = '10047',
 }
-
 export const LiqPayUnitSchema = z.enum(LiqPayUnitEnum)
-
 export type LiqPayUnit = z.infer<typeof LiqPayUnitSchema>

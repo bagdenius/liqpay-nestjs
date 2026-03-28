@@ -6,7 +6,6 @@ export const LiqPaySubscribePeriodicitySchema = z.enum([
 	'month',
 	'year',
 ])
-
 export type LiqPaySubscribePeriodicity = z.infer<
 	typeof LiqPaySubscribePeriodicitySchema
 >

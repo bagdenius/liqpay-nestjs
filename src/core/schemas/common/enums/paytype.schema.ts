@@ -12,5 +12,4 @@ export const LiqPayPaytypeSchema = z.enum([
 	'invoice',
 	'qr',
 ])
-
 export type LiqPayPaytype = z.infer<typeof LiqPayPaytypeSchema>
