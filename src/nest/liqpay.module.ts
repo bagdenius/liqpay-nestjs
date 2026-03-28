@@ -10,7 +10,7 @@ import { LiqpayService } from './liqpay.service'
 
 @Module({})
 export class LiqPayModule {
-	public static register(options: LiqPayOptions): DynamicModule {
+	public static forRoot(options: LiqPayOptions): DynamicModule {
 		return {
 			module: LiqPayModule,
 			providers: [createLiqpayOptionsProvider(options), LiqpayService],
@@ -19,7 +19,7 @@ export class LiqPayModule {
 		}
 	}
 
-	public static registerAsync(options: LiqPayAsyncOptions): DynamicModule {
+	public static forRootAsync(options: LiqPayAsyncOptions): DynamicModule {
 		return {
 			module: LiqPayModule,
 			imports: options.imports ?? [],
