@@ -1,7 +1,14 @@
 import { createHash } from 'node:crypto'
+import z from 'zod'
 
 import { LIQPAY_CHECKOUT_URL, LIQPAY_REQUEST_URL } from './constants'
-import { LiqPayEnvelope } from './schemas/base'
+import {
+	LiqPayEnvelope,
+	LiqPayRawRequest,
+	LiqPayRawResponse,
+	LiqPayRequest,
+	LiqPayResponse,
+} from './schemas/base'
 import {
 	type LiqPayCheckoutRequest,
 	LiqPayRawCheckoutRequestSchema,
@@ -63,11 +70,11 @@ export class LiqPayClient {
 		private readonly privateKey: string,
 	) {}
 
-	private encodeData(data: any): string {
+	private encodeData(data: LiqPayRawRequest): string {
 		return Buffer.from(JSON.stringify(data)).toString('base64')
 	}
 
-	private decodeData(encodedData: string) {
+	private decodeData<T extends LiqPayRawResponse>(encodedData: string): T {
 		return JSON.parse(Buffer.from(encodedData, 'base64').toString('utf-8'))
 	}
 
@@ -76,10 +83,10 @@ export class LiqPayClient {
 		return createHash('sha3-256').update(signatureString).digest('base64')
 	}
 
-	private getCredentials(data: any): LiqPayEnvelope {
+	private getCredentials(data: LiqPayRawRequest): LiqPayEnvelope {
 		const payload = { ...data, public_key: this.publicKey }
 		const encoded = this.encodeData(payload)
-		const signature = this.createSignature(data)
+		const signature = this.createSignature(encoded)
 		return { data: encoded, signature }
 	}
 
@@ -88,22 +95,36 @@ export class LiqPayClient {
 		return expected === envelope.signature
 	}
 
-	private async call() {
-		throw new Error('call is not implemented')
+	private async call<
+		TRequest extends LiqPayRequest,
+		TRawRequest extends LiqPayRawRequest,
+		TResponse extends LiqPayResponse,
+	>(
+		payload: TRequest,
+		rawSchema: z.ZodType<TRawRequest>,
+		responseSchema: z.ZodType<TResponse>,
+		url: string,
+	): Promise<TResponse> {
+		const raw = rawSchema.parse(payload)
+		const envelope = this.getCredentials(raw)
+		const res = await fetch(url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: new URLSearchParams(envelope),
+		})
+		const rawData = await res.json()
+		return responseSchema.parse(rawData)
 	}
 
 	public async getPaymentStatus(
 		payload: LiqPayPaymentStatusRequest,
 	): Promise<LiqPayPaymentStatusResponse> {
-		const raw = LiqPayRawPaymentStatusRequestSchema.parse(payload)
-		const envelope = this.getCredentials(raw)
-		const response = await fetch(LIQPAY_REQUEST_URL, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: new URLSearchParams(envelope),
-		})
-		const rawData = await response.json()
-		return LiqPayPaymentStatusResponseSchema.parse(rawData)
+		return await this.call(
+			payload,
+			LiqPayRawPaymentStatusRequestSchema,
+			LiqPayPaymentStatusResponseSchema,
+			LIQPAY_REQUEST_URL,
+		)
 	}
 
 	public getCheckoutUrl(payload: LiqPayCheckoutRequest): string {
