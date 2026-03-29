@@ -15,7 +15,7 @@ export const dateToIso = (d?: Date) => d?.toISOString()
 export const parseBoolean = (value: string | boolean | undefined) =>
 	value == null ? undefined : toBoolean(value)
 
-export const parseDate = (value: Date | string | undefined) => {
+export const parseDate = (value: Date | number | string | undefined) => {
 	if (value === undefined) return undefined
 	const date = new Date(value)
 	return isNaN(date.getTime()) ? undefined : date
