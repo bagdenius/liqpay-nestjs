@@ -1,7 +1,12 @@
 import { objectToCamel } from 'ts-case-convert'
 import { z } from 'zod'
 
-import { parseBoolean, parseDate, parseOptional } from '../../utils'
+import {
+	parseBoolean,
+	parseDate,
+	parseOptional,
+	removeUndefined,
+} from '../../utils'
 import {
 	LiqPayActionSchema,
 	LiqPayCurrencySchema,
@@ -80,7 +85,7 @@ export type LiqPayRawCheckoutCallback = z.infer<
 export const LiqPayCheckoutCallbackSchema =
 	LiqPayRawCheckoutCallbackSchema.transform(raw => {
 		const camelized = objectToCamel(raw)
-		return {
+		const transformed = {
 			...camelized,
 			version: parseOptional(LiqPayVersionSchema, camelized.version),
 			action: parseOptional(LiqPayActionSchema, camelized.action),
@@ -104,6 +109,7 @@ export const LiqPayCheckoutCallbackSchema =
 			status: parseOptional(LiqPayPaymentStatusSchema, camelized.status),
 			waitReserveStatus: parseBoolean(camelized.waitReserveStatus),
 		}
+		return removeUndefined(transformed)
 	})
 export type LiqPayCheckoutCallback = z.infer<
 	typeof LiqPayCheckoutCallbackSchema

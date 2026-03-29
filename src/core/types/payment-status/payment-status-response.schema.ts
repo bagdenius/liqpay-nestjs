@@ -1,7 +1,12 @@
 import { objectToCamel } from 'ts-case-convert'
 import { z } from 'zod'
 
-import { parseBoolean, parseDate, parseOptional } from '../../utils'
+import {
+	parseBoolean,
+	parseDate,
+	parseOptional,
+	removeUndefined,
+} from '../../utils'
 import {
 	LiqPayActionSchema,
 	LiqPayBonusTypeSchema,
@@ -75,7 +80,7 @@ export type LiqPayRawPaymentStatusResponse = z.infer<
 export const LiqPayPaymentStatusResponseSchema =
 	LiqPayRawPaymentStatusResponseSchema.transform(raw => {
 		const camelized = objectToCamel(raw)
-		return {
+		const transformed = {
 			...camelized,
 			action: parseOptional(LiqPayActionSchema, camelized.action),
 			bonusType: parseOptional(LiqPayBonusTypeSchema, camelized.bonusType),
@@ -100,6 +105,7 @@ export const LiqPayPaymentStatusResponseSchema =
 			waitReserveStatus: parseBoolean(camelized.waitReserveStatus),
 			version: parseOptional(LiqPayVersionSchema, camelized.version),
 		}
+		return removeUndefined(transformed)
 	})
 export type LiqPayPaymentStatusResponse = z.infer<
 	typeof LiqPayPaymentStatusResponseSchema

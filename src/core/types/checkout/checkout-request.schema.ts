@@ -1,7 +1,13 @@
 import { objectToSnake } from 'ts-case-convert'
 import z from 'zod'
 
-import { boolTo, dateToIso, join, stringify } from '../../utils'
+import {
+	boolTo,
+	dateToIso,
+	join,
+	removeUndefined,
+	stringify,
+} from '../../utils'
 import {
 	LiqPayDetailAddendaSchema,
 	LiqPayFiscalDataSchema,
@@ -65,7 +71,7 @@ export type LiqPayCheckoutRequest = z.infer<typeof LiqPayCheckoutRequestSchema>
 export const LiqPayRawCheckoutRequestSchema =
 	LiqPayCheckoutRequestSchema.transform(typed => {
 		const snakelized = objectToSnake(typed)
-		return {
+		const transformed = {
 			...snakelized,
 			expired_date: dateToIso(snakelized.expired_date),
 			paytypes: join(snakelized.paytypes),
@@ -76,6 +82,7 @@ export const LiqPayRawCheckoutRequestSchema =
 			recurringbytoken: boolTo(snakelized.recurringbytoken, '1'),
 			dae: stringify(snakelized.dae),
 		}
+		return removeUndefined(transformed)
 	})
 export type LiqPayRawCheckoutRequest = z.infer<
 	typeof LiqPayRawCheckoutRequestSchema
