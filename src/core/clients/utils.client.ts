@@ -64,8 +64,11 @@ export class LiqPayUtilsClient {
 		const error = this.parseError(data)
 		if (error) return error
 		const parsed = schema.safeParse(data)
-		if (!parsed.success)
+		if (!parsed.success) {
+			/** testing */
+			console.log('PARSED ERROR: ', parsed.error)
 			return this.createError('validation_error', 'Invalid response schema')
+		}
 		return { data: parsed.data, error: null }
 	}
 
