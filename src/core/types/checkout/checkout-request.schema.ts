@@ -31,7 +31,7 @@ export const LiqPayCheckoutRequestSchema = z.object({
 	cardToken: z.string().optional(),
 	currency: LiqPayCurrencySchema,
 	description: z.string(),
-	ip: z.string().optional,
+	ip: z.string().optional(),
 	orderId: z.string().max(255),
 	rroInfo: LiqPayFiscalDataSchema.optional(),
 	expiredDate: z.date().optional(),
