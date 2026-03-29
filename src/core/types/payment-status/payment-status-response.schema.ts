@@ -1,7 +1,7 @@
 import { objectToCamel } from 'ts-case-convert'
 import { z } from 'zod'
 
-import { parseBool, parseDate } from '../../utils'
+import { parseBoolean, parseDate, parseOptional } from '../../utils'
 import {
 	LiqPayActionSchema,
 	LiqPayBonusTypeSchema,
@@ -77,33 +77,28 @@ export const LiqPayPaymentStatusResponseSchema =
 		const camelized = objectToCamel(raw)
 		return {
 			...camelized,
-			action: camelized.action && LiqPayActionSchema.parse(camelized.action),
-			bonusType:
-				camelized.bonusType && LiqPayBonusTypeSchema.parse(camelized.bonusType),
+			action: parseOptional(LiqPayActionSchema, camelized.action),
+			bonusType: parseOptional(LiqPayBonusTypeSchema, camelized.bonusType),
 			createDate: parseDate(camelized.createDate),
-			currency:
-				camelized.currency && LiqPayCurrencySchema.parse(camelized.currency),
-			currencyCredit:
-				camelized.currencyCredit &&
-				LiqPayCurrencySchema.parse(camelized.currencyCredit),
-			currencyDebit:
-				camelized.currencyDebit &&
-				LiqPayCurrencySchema.parse(camelized.currencyDebit),
+			currency: parseOptional(LiqPayCurrencySchema, camelized.currency),
+			currencyCredit: parseOptional(
+				LiqPayCurrencySchema,
+				camelized.currencyCredit,
+			),
+			currencyDebit: parseOptional(
+				LiqPayCurrencySchema,
+				camelized.currencyDebit,
+			),
 			endDate: parseDate(camelized.endDate),
-			is3ds: parseBool(camelized.is3ds),
-			language:
-				camelized.language && LiqPayLanguageSchema.parse(camelized.language),
-			momentPart: parseBool(camelized.momentPart),
-			mpiEci: camelized.mpiEci && LiqPayMpiEciSchema.parse(camelized.mpiEci),
-			paytype:
-				camelized.paytype && LiqPayPaytypeSchema.parse(camelized.paytype),
-			result:
-				camelized.result && LiqPayRequestResultSchema.parse(camelized.result),
-			status:
-				camelized.status && LiqPayPaymentStatusSchema.parse(camelized.status),
-			waitReserveStatus: parseBool(camelized.waitReserveStatus),
-			version:
-				camelized.version && LiqPayVersionSchema.parse(camelized.version),
+			is3ds: parseBoolean(camelized.is3ds),
+			language: parseOptional(LiqPayLanguageSchema, camelized.language),
+			momentPart: parseBoolean(camelized.momentPart),
+			mpiEci: parseOptional(LiqPayMpiEciSchema, camelized.mpiEci),
+			paytype: parseOptional(LiqPayPaytypeSchema, camelized.paytype),
+			result: parseOptional(LiqPayRequestResultSchema, camelized.result),
+			status: parseOptional(LiqPayPaymentStatusSchema, camelized.status),
+			waitReserveStatus: parseBoolean(camelized.waitReserveStatus),
+			version: parseOptional(LiqPayVersionSchema, camelized.version),
 		}
 	})
 export type LiqPayPaymentStatusResponse = z.infer<

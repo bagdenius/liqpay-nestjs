@@ -16,11 +16,7 @@ export type LiqPayPaymentStatusRequest = z.infer<
 export const LiqPayRawPaymentStatusRequestSchema =
 	LiqPayPaymentStatusRequestSchema.transform(typed => {
 		const snakelized = objectToSnake(typed)
-		return {
-			...snakelized,
-			version: Number(snakelized.version),
-			action: String(snakelized.action),
-		}
+		return { ...snakelized }
 	})
 export type LiqPayRawPaymentStatusRequest = z.infer<
 	typeof LiqPayRawPaymentStatusRequestSchema

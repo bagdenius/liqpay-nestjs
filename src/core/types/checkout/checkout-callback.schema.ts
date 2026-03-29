@@ -1,7 +1,7 @@
 import { objectToCamel } from 'ts-case-convert'
 import { z } from 'zod'
 
-import { parseBool, parseDate } from '../../utils'
+import { parseBoolean, parseDate, parseOptional } from '../../utils'
 import {
 	LiqPayActionSchema,
 	LiqPayCurrencySchema,
@@ -82,30 +82,27 @@ export const LiqPayCheckoutCallbackSchema =
 		const camelized = objectToCamel(raw)
 		return {
 			...camelized,
-			version:
-				camelized.version && LiqPayVersionSchema.parse(camelized.version),
-			action: camelized.action && LiqPayActionSchema.parse(camelized.action),
+			version: parseOptional(LiqPayVersionSchema, camelized.version),
+			action: parseOptional(LiqPayActionSchema, camelized.action),
 			completionDate: parseDate(camelized.completionDate),
 			createDate: parseDate(camelized.createDate),
-			currency:
-				camelized.currency && LiqPayCurrencySchema.parse(camelized.currency),
-			currencyCredit:
-				camelized.currencyCredit &&
-				LiqPayCurrencySchema.parse(camelized.currencyCredit),
-			currencyDebit:
-				camelized.currencyDebit &&
-				LiqPayCurrencySchema.parse(camelized.currencyDebit),
+			currency: parseOptional(LiqPayCurrencySchema, camelized.currency),
+			currencyCredit: parseOptional(
+				LiqPayCurrencySchema,
+				camelized.currencyCredit,
+			),
+			currencyDebit: parseOptional(
+				LiqPayCurrencySchema,
+				camelized.currencyDebit,
+			),
 			endDate: parseDate(camelized.endDate),
-			errCode:
-				camelized.errCode && LiqPayErrorCodeSchema.parse(camelized.errCode),
-			is3ds: parseBool(camelized.is3ds),
-			mpiEci: camelized.mpiEci && LiqPayMpiEciSchema.parse(camelized.mpiEci),
-			paytype:
-				camelized.paytype && LiqPayPaytypeSchema.parse(camelized.paytype),
+			errCode: parseOptional(LiqPayErrorCodeSchema, camelized.errCode),
+			is3ds: parseBoolean(camelized.is3ds),
+			mpiEci: parseOptional(LiqPayMpiEciSchema, camelized.mpiEci),
+			paytype: parseOptional(LiqPayPaytypeSchema, camelized.paytype),
 			refundDateLast: parseDate(camelized.refundDateLast),
-			status:
-				camelized.status && LiqPayPaymentStatusSchema.parse(camelized.status),
-			waitReserveStatus: parseBool(camelized.waitReserveStatus),
+			status: parseOptional(LiqPayPaymentStatusSchema, camelized.status),
+			waitReserveStatus: parseBoolean(camelized.waitReserveStatus),
 		}
 	})
 export type LiqPayCheckoutCallback = z.infer<

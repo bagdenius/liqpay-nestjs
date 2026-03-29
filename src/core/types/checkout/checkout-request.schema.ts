@@ -1,6 +1,7 @@
 import { objectToSnake } from 'ts-case-convert'
 import z from 'zod'
 
+import { boolTo, dateToIso, join, stringify } from '../../utils'
 import {
 	LiqPayDetailAddendaSchema,
 	LiqPayFiscalDataSchema,
@@ -30,7 +31,7 @@ export const LiqPayCheckoutRequestSchema = z.object({
 	paytypes: z.array(LiqPayPaytypeSchema).optional(),
 	resultUrl: z.string().max(510).optional(),
 	serverUrl: z.string().max(510).optional(),
-	verifycode: z.literal('Y').optional(),
+	verifycode: z.boolean().optional(),
 	splitRules: z.array(LiqPaySplitRuleSchema).optional(),
 
 	// SENDER PARAMS
@@ -42,13 +43,13 @@ export const LiqPayCheckoutRequestSchema = z.object({
 	senderPostalCode: z.string().optional(),
 
 	// SUBSCRIPTION PARAMS
-	subscribe: z.literal('1').optional(),
+	subscribe: z.boolean().optional(),
 	subscribeDateStart: z.date().optional(),
 	subscribePeriodicity: LiqPaySubscribePeriodicitySchema.optional(),
 
 	// ONE CLICK PAYMENT PARAMS
 	customer: z.string().max(100).optional(),
-	recurringbytoken: z.literal('1').optional(),
+	recurringbytoken: z.boolean().optional(),
 	customerUserId: z.string().optional(),
 
 	// OTHER PARAMS
@@ -66,25 +67,14 @@ export const LiqPayRawCheckoutRequestSchema =
 		const snakelized = objectToSnake(typed)
 		return {
 			...snakelized,
-			version: Number(snakelized.version),
-			action: String(snakelized.action),
-			currency: String(snakelized.currency),
-			expired_date:
-				snakelized.expired_date && snakelized.expired_date.toISOString(),
-			language: snakelized.language && String(snakelized.language),
-			paytypes: snakelized.paytypes && snakelized.paytypes.join(','),
-			verifycode: snakelized.verifycode && String(snakelized.verifycode),
-			split_rules:
-				snakelized.split_rules && JSON.stringify(snakelized.split_rules),
-			subscribe_date_start:
-				snakelized.subscribe_date_start &&
-				snakelized.subscribe_date_start.toISOString(),
-			subscribe_periodicity:
-				snakelized.subscribe_periodicity &&
-				String(snakelized.subscribe_periodicity),
-			recurringbytoken:
-				snakelized.recurringbytoken && String(snakelized.recurringbytoken),
-			dae: snakelized.dae && JSON.stringify(snakelized.dae),
+			expired_date: dateToIso(snakelized.expired_date),
+			paytypes: join(snakelized.paytypes),
+			verifycode: boolTo(snakelized.verifycode, 'Y'),
+			split_rules: stringify(snakelized.split_rules),
+			subscribe: boolTo(snakelized.subscribe, '1'),
+			subscribe_date_start: dateToIso(snakelized.subscribe_date_start),
+			recurringbytoken: boolTo(snakelized.recurringbytoken, '1'),
+			dae: stringify(snakelized.dae),
 		}
 	})
 export type LiqPayRawCheckoutRequest = z.infer<
