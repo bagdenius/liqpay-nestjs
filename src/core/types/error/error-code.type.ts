@@ -1,4 +1,4 @@
-import { LiqPayErrorCode } from '../common/enums'
+import { LiqPayErrorCode } from './error-code.schema'
 
 export type InternalErrorCode =
 	| LiqPayErrorCode

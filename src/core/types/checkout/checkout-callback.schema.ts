@@ -5,12 +5,12 @@ import { parseBoolean, parseDate, parseOptional } from '../../utils'
 import {
 	LiqPayActionSchema,
 	LiqPayCurrencySchema,
-	LiqPayErrorCodeSchema,
 	LiqPayMpiEciSchema,
 	LiqPayPaymentStatusSchema,
 	LiqPayPaytypeSchema,
 	LiqPayVersionSchema,
 } from '../common/enums'
+import { LiqPayErrorCodeSchema } from '../error'
 
 // TODO: check for optional fields on real api callbacks
 export const LiqPayRawCheckoutCallbackSchema = z.object({
