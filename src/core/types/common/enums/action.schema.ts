@@ -2,6 +2,7 @@ import z from 'zod'
 
 export const LiqPayActionSchema = z.enum([
 	'pay',
+	'paytoken',
 	'hold',
 	'paysplit',
 	'subscribe',
