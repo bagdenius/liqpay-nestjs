@@ -5,6 +5,7 @@ import {
 	parseBoolean,
 	parseDate,
 	parseOptional,
+	parseString,
 	removeUndefined,
 } from '../../utils'
 import {
@@ -82,6 +83,7 @@ export const LiqPayPaymentStatusResponseSchema =
 		const camelized = objectToCamel(raw)
 		const transformed = {
 			...camelized,
+			acqId: parseString(camelized.acqId),
 			action: parseOptional(LiqPayActionSchema, camelized.action),
 			bonusType: parseOptional(LiqPayBonusTypeSchema, camelized.bonusType),
 			createDate: parseDate(camelized.createDate),
@@ -99,10 +101,12 @@ export const LiqPayPaymentStatusResponseSchema =
 			language: parseOptional(LiqPayLanguageSchema, camelized.language),
 			momentPart: parseBoolean(camelized.momentPart),
 			mpiEci: parseOptional(LiqPayMpiEciSchema, String(camelized.mpiEci)),
+			paymentId: parseString(camelized.paymentId),
 			paytype: parseOptional(LiqPayPaytypeSchema, camelized.paytype),
 			result: parseOptional(LiqPayRequestResultSchema, camelized.result),
 			status: parseOptional(LiqPayPaymentStatusSchema, camelized.status),
 			waitReserveStatus: parseBoolean(camelized.waitReserveStatus),
+			transactionId: parseString(camelized.transactionId),
 			version: parseOptional(LiqPayVersionSchema, camelized.version),
 		}
 		return removeUndefined(transformed)

@@ -5,6 +5,7 @@ import {
 	parseBoolean,
 	parseDate,
 	parseOptional,
+	parseString,
 	removeUndefined,
 } from '../../utils'
 import {
@@ -88,6 +89,7 @@ export const LiqPayCheckoutCallbackSchema =
 		const transformed = {
 			...camelized,
 			version: parseOptional(LiqPayVersionSchema, camelized.version),
+			acqId: parseString(camelized.acqId),
 			action: parseOptional(LiqPayActionSchema, camelized.action),
 			completionDate: parseDate(camelized.completionDate),
 			createDate: parseDate(camelized.createDate),
@@ -104,6 +106,7 @@ export const LiqPayCheckoutCallbackSchema =
 			errCode: parseOptional(LiqPayErrorCodeSchema, camelized.errCode),
 			is3ds: parseBoolean(camelized.is3ds),
 			mpiEci: parseOptional(LiqPayMpiEciSchema, String(camelized.mpiEci)),
+			orderId: parseString(camelized.orderId),
 			paytype: parseOptional(LiqPayPaytypeSchema, camelized.paytype),
 			refundDateLast: parseDate(camelized.refundDateLast),
 			status: parseOptional(LiqPayPaymentStatusSchema, camelized.status),

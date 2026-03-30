@@ -35,3 +35,8 @@ export const stringify = <T>(v?: T) =>
 
 export const join = (arr?: string[]) =>
 	arr?.length ? arr.join(',') : undefined
+
+export const parseString = (value: unknown): string | undefined => {
+	if (value === undefined) return undefined
+	return String(value)
+}
