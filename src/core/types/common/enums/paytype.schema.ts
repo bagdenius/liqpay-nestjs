@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const LiqPayPaytypeSchema = z.enum([
+export const PaytypeSchema = z.enum([
 	'apay',
 	'gpay',
 	'card',
@@ -12,4 +12,4 @@ export const LiqPayPaytypeSchema = z.enum([
 	'invoice',
 	'qr',
 ])
-export type LiqPayPaytype = z.infer<typeof LiqPayPaytypeSchema>
+export type Paytype = z.infer<typeof PaytypeSchema>

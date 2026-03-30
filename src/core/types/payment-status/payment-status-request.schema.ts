@@ -1,23 +1,21 @@
 import { objectToSnake } from 'ts-case-convert'
 import z from 'zod'
 
-import { LiqPayActionSchema, LiqPayVersionSchema } from '../common/enums'
+import { ActionSchema, LiqPayVersionSchema } from '../common/enums'
 
-export const LiqPayPaymentStatusRequestSchema = z.object({
+export const PaymentStatusRequestSchema = z.object({
 	version: LiqPayVersionSchema.optional(),
 	publicKey: z.string().optional(),
-	action: LiqPayActionSchema,
+	action: ActionSchema,
 	orderId: z.string().max(255),
 })
-export type LiqPayPaymentStatusRequest = z.infer<
-	typeof LiqPayPaymentStatusRequestSchema
->
+export type PaymentStatusRequest = z.infer<typeof PaymentStatusRequestSchema>
 
-export const LiqPayRawPaymentStatusRequestSchema =
-	LiqPayPaymentStatusRequestSchema.transform(typed => {
+export const RawPaymentStatusRequestSchema =
+	PaymentStatusRequestSchema.transform(typed => {
 		const snakelized = objectToSnake(typed)
 		return { ...snakelized }
 	})
-export type LiqPayRawPaymentStatusRequest = z.infer<
-	typeof LiqPayRawPaymentStatusRequestSchema
+export type RawPaymentStatusRequest = z.infer<
+	typeof RawPaymentStatusRequestSchema
 >

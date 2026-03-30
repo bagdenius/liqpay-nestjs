@@ -1,23 +1,23 @@
-import { LiqPayDetailAddenda } from './detail-addenda'
-import { LiqPayFiscalData } from './fiscal-data'
-import { LiqPaySplitRule } from './split-rule'
+import { DetailAddenda } from './detail-addenda'
+import { FiscalData } from './fiscal-data'
+import { SplitRule } from './split-rule'
 import {
-	LiqPayAction,
-	LiqPayCurrency,
-	LiqPayLanguage,
-	LiqPayPaytype,
-	LiqPaySubscribePeriodicity,
+	Action,
+	Currency,
+	Language,
+	Paytype,
+	SubscribePeriodicity,
 } from './types'
 
-export interface LiqPayCheckoutRequest {
+export interface CheckoutRequest {
 	// SHARED
 	version: 7
 	public_key: string
 
 	// PAYMENT CORE
-	action: LiqPayAction
+	action: Action
 	amount: number
-	currency: LiqPayCurrency
+	currency: Currency
 	description: string
 	order_id: string
 
@@ -25,8 +25,8 @@ export interface LiqPayCheckoutRequest {
 	expired_date?: string
 
 	// CHECKOUT UI
-	language?: LiqPayLanguage
-	paytypes?: LiqPayPaytype[]
+	language?: Language
+	paytypes?: Paytype[]
 
 	// CHECKOUT FLOW
 	result_url?: string
@@ -43,7 +43,7 @@ export interface LiqPayCheckoutRequest {
 	// SUBSCRIPTION
 	subscribe?: '1'
 	subscribe_date_start?: string
-	subscribe_periodicity?: LiqPaySubscribePeriodicity
+	subscribe_periodicity?: SubscribePeriodicity
 
 	// ONE CLICK PAYMENT / TOKENIZATION
 	customer?: string
@@ -57,10 +57,10 @@ export interface LiqPayCheckoutRequest {
 	product_url?: string
 
 	// FISCALIZATION
-	rro_info?: LiqPayFiscalData
+	rro_info?: FiscalData
 
 	// PAYMENT SPLITTING
-	split_rules?: LiqPaySplitRule[]
+	split_rules?: SplitRule[]
 
 	// METADATA
 	info?: string
@@ -69,5 +69,5 @@ export interface LiqPayCheckoutRequest {
 	verifycode?: 'Y'
 
 	// SPECIAL (MCC 4511 / AIRLINE DATA)
-	dae?: LiqPayDetailAddenda
+	dae?: DetailAddenda
 }

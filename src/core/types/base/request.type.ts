@@ -1,11 +1,8 @@
-import { LiqPayCheckoutRequest, LiqPayRawCheckoutRequest } from '../checkout'
+import { CheckoutRequest, RawCheckoutRequest } from '../checkout'
 import {
-	LiqPayPaymentStatusRequest,
-	LiqPayRawPaymentStatusRequest,
+	PaymentStatusRequest,
+	RawPaymentStatusRequest,
 } from '../payment-status'
 
-export type LiqPayRequest = LiqPayCheckoutRequest | LiqPayPaymentStatusRequest
-
-export type LiqPayRawRequest =
-	| LiqPayRawCheckoutRequest
-	| LiqPayRawPaymentStatusRequest
+export type LiqPayRequest = CheckoutRequest | PaymentStatusRequest
+export type LiqPayRawRequest = RawCheckoutRequest | RawPaymentStatusRequest

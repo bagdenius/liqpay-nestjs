@@ -9,38 +9,38 @@ import {
 	stringify,
 } from '../../utils'
 import {
-	LiqPayDetailAddendaSchema,
-	LiqPayFiscalDataSchema,
-	LiqPaySplitRuleSchema,
+	DetailAddendaSchema,
+	FiscalDataSchema,
+	SplitRuleSchema,
 } from '../common'
 import {
-	LiqPayActionSchema,
-	LiqPayCurrencySchema,
-	LiqPayLanguageSchema,
-	LiqPayPaytypeSchema,
-	LiqPaySubscribePeriodicitySchema,
+	ActionSchema,
+	CurrencySchema,
+	LanguageSchema,
 	LiqPayVersionSchema,
+	PaytypeSchema,
+	SubscribePeriodicitySchema,
 } from '../common/enums'
 
-export const LiqPayCheckoutRequestSchema = z.object({
+export const CheckoutRequestSchema = z.object({
 	// MAIN PARAMS
 	version: LiqPayVersionSchema.optional(),
 	publicKey: z.string().optional(),
-	action: LiqPayActionSchema,
+	action: ActionSchema,
 	amount: z.number().positive(),
 	cardToken: z.string().optional(),
-	currency: LiqPayCurrencySchema,
+	currency: CurrencySchema,
 	description: z.string(),
 	ip: z.string().optional(),
 	orderId: z.string().max(255),
-	rroInfo: LiqPayFiscalDataSchema.optional(),
+	rroInfo: FiscalDataSchema.optional(),
 	expiredDate: z.date().optional(),
-	language: LiqPayLanguageSchema.optional(),
-	paytypes: z.array(LiqPayPaytypeSchema).optional(),
+	language: LanguageSchema.optional(),
+	paytypes: z.array(PaytypeSchema).optional(),
 	resultUrl: z.string().max(510).optional(),
 	serverUrl: z.string().max(510).optional(),
 	verifycode: z.boolean().optional(),
-	splitRules: z.array(LiqPaySplitRuleSchema).optional(),
+	splitRules: z.array(SplitRuleSchema).optional(),
 
 	// SENDER PARAMS
 	senderAddress: z.string().optional(),
@@ -53,7 +53,7 @@ export const LiqPayCheckoutRequestSchema = z.object({
 	// SUBSCRIPTION PARAMS
 	subscribe: z.boolean().optional(),
 	subscribeDateStart: z.date().optional(),
-	subscribePeriodicity: LiqPaySubscribePeriodicitySchema.optional(),
+	subscribePeriodicity: SubscribePeriodicitySchema.optional(),
 
 	// ONE CLICK PAYMENT PARAMS
 	customer: z.string().max(100).optional(),
@@ -61,17 +61,17 @@ export const LiqPayCheckoutRequestSchema = z.object({
 	customerUserId: z.string().optional(),
 
 	// OTHER PARAMS
-	dae: LiqPayDetailAddendaSchema.optional(),
+	dae: DetailAddendaSchema.optional(),
 	info: z.string().optional(),
 	productCategory: z.string().max(25).optional(),
 	productDescription: z.string().max(500).optional(),
 	productName: z.string().max(100).optional(),
 	productUrl: z.string().max(510).optional(),
 })
-export type LiqPayCheckoutRequest = z.infer<typeof LiqPayCheckoutRequestSchema>
+export type CheckoutRequest = z.infer<typeof CheckoutRequestSchema>
 
-export const LiqPayRawCheckoutRequestSchema =
-	LiqPayCheckoutRequestSchema.transform(typed => {
+export const RawCheckoutRequestSchema = CheckoutRequestSchema.transform(
+	typed => {
 		const snakelized = objectToSnake(typed)
 		const transformed = {
 			...snakelized,
@@ -85,7 +85,6 @@ export const LiqPayRawCheckoutRequestSchema =
 			dae: stringify(snakelized.dae),
 		}
 		return removeUndefined(transformed)
-	})
-export type LiqPayRawCheckoutRequest = z.infer<
-	typeof LiqPayRawCheckoutRequestSchema
->
+	},
+)
+export type RawCheckoutRequest = z.infer<typeof RawCheckoutRequestSchema>

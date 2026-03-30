@@ -1,6 +1,6 @@
 import z from 'zod'
 
-export const LiqPayActionSchema = z.enum([
+export const ActionSchema = z.enum([
 	'pay',
 	'paytoken',
 	'hold',
@@ -11,4 +11,4 @@ export const LiqPayActionSchema = z.enum([
 	'regular',
 	'status',
 ])
-export type LiqPayAction = z.infer<typeof LiqPayActionSchema>
+export type Action = z.infer<typeof ActionSchema>

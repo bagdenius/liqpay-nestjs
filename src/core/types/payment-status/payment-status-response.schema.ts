@@ -9,19 +9,19 @@ import {
 	removeUndefined,
 } from '../../utils'
 import {
-	LiqPayActionSchema,
-	LiqPayBonusTypeSchema,
-	LiqPayCurrencySchema,
-	LiqPayLanguageSchema,
-	LiqPayMpiEciSchema,
-	LiqPayPaymentStatusSchema,
-	LiqPayPaytypeSchema,
-	LiqPayRequestResultSchema,
+	ActionSchema,
+	BonusTypeSchema,
+	CurrencySchema,
+	LanguageSchema,
 	LiqPayVersionSchema,
+	MpiEciSchema,
+	PaymentStatusSchema,
+	PaytypeSchema,
+	RequestResultSchema,
 } from '../common/enums'
 
 // TODO: check for optional fields on real api responses
-export const LiqPayRawPaymentStatusResponseSchema = z.object({
+export const RawPaymentStatusResponseSchema = z.object({
 	acq_id: z.number().optional(),
 	action: z.string().optional(),
 	agent_commission: z.number().optional(),
@@ -74,43 +74,35 @@ export const LiqPayRawPaymentStatusResponseSchema = z.object({
 	type: z.string().optional(),
 	version: z.number().optional(),
 })
-export type LiqPayRawPaymentStatusResponse = z.infer<
-	typeof LiqPayRawPaymentStatusResponseSchema
+export type RawPaymentStatusResponse = z.infer<
+	typeof RawPaymentStatusResponseSchema
 >
 
-export const LiqPayPaymentStatusResponseSchema =
-	LiqPayRawPaymentStatusResponseSchema.transform(raw => {
+export const PaymentStatusResponseSchema =
+	RawPaymentStatusResponseSchema.transform(raw => {
 		const camelized = objectToCamel(raw)
 		const transformed = {
 			...camelized,
 			acqId: parseString(camelized.acqId),
-			action: parseOptional(LiqPayActionSchema, camelized.action),
-			bonusType: parseOptional(LiqPayBonusTypeSchema, camelized.bonusType),
+			action: parseOptional(ActionSchema, camelized.action),
+			bonusType: parseOptional(BonusTypeSchema, camelized.bonusType),
 			createDate: parseDate(camelized.createDate),
-			currency: parseOptional(LiqPayCurrencySchema, camelized.currency),
-			currencyCredit: parseOptional(
-				LiqPayCurrencySchema,
-				camelized.currencyCredit,
-			),
-			currencyDebit: parseOptional(
-				LiqPayCurrencySchema,
-				camelized.currencyDebit,
-			),
+			currency: parseOptional(CurrencySchema, camelized.currency),
+			currencyCredit: parseOptional(CurrencySchema, camelized.currencyCredit),
+			currencyDebit: parseOptional(CurrencySchema, camelized.currencyDebit),
 			endDate: parseDate(camelized.endDate),
 			is3ds: parseBoolean(camelized.is3ds),
-			language: parseOptional(LiqPayLanguageSchema, camelized.language),
+			language: parseOptional(LanguageSchema, camelized.language),
 			momentPart: parseBoolean(camelized.momentPart),
-			mpiEci: parseOptional(LiqPayMpiEciSchema, String(camelized.mpiEci)),
+			mpiEci: parseOptional(MpiEciSchema, String(camelized.mpiEci)),
 			paymentId: parseString(camelized.paymentId),
-			paytype: parseOptional(LiqPayPaytypeSchema, camelized.paytype),
-			result: parseOptional(LiqPayRequestResultSchema, camelized.result),
-			status: parseOptional(LiqPayPaymentStatusSchema, camelized.status),
+			paytype: parseOptional(PaytypeSchema, camelized.paytype),
+			result: parseOptional(RequestResultSchema, camelized.result),
+			status: parseOptional(PaymentStatusSchema, camelized.status),
 			waitReserveStatus: parseBoolean(camelized.waitReserveStatus),
 			transactionId: parseString(camelized.transactionId),
 			version: parseOptional(LiqPayVersionSchema, camelized.version),
 		}
 		return removeUndefined(transformed)
 	})
-export type LiqPayPaymentStatusResponse = z.infer<
-	typeof LiqPayPaymentStatusResponseSchema
->
+export type PaymentStatusResponse = z.infer<typeof PaymentStatusResponseSchema>

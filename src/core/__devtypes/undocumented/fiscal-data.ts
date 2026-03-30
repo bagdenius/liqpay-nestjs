@@ -1,26 +1,26 @@
-import { LiqPayFiscalTax, LiqPayUnit } from './types'
+import { FiscalTax, Unit } from './types'
 
-export interface LiqPayFiscalData {
-	items?: LiqPayFiscalProductById[] | LiqPayFiscalProductByApi[]
+export interface FiscalData {
+	items?: FiscalProductById[] | FiscalProductByApi[]
 	delivery_emails?: string[]
 }
 
-export interface LiqPayFiscalProductById {
+export interface FiscalProductById {
 	amount: number
 	cost: number
 	id: number
 	price: number
 }
 
-export interface LiqPayFiscalProductByApi {
+export interface FiscalProductByApi {
 	amount: number
 	cost: number
 	price: number
 	categoryname: string
 	name: string
-	unitcode: LiqPayUnit
+	unitcode: Unit
 	barcode?: string
 	codifier?: string
 	vndcode?: string
-	taxs?: LiqPayFiscalTax[]
+	taxs?: FiscalTax[]
 }

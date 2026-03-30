@@ -1,7 +1,7 @@
 /**
  * Constant values ​​of tax rates for goods
  */
-export const LiqPayTaxRates = {
+export const TaxRates = {
 	NO_VAT: { letter: 'А', name: 'Без ПДВ 0%', type: 0, prc: 0 },
 	VAT20: { letter: 'Б', name: 'ПДВ 20%', type: 0, prc: 20 },
 	VAT7: { letter: 'В', name: 'ПДВ 7%', type: 0, prc: 7 },
@@ -19,7 +19,7 @@ export const LiqPayTaxRates = {
  * const tax = LiqPayTaxRates[key];
  * ```
  */
-export type LiqPayTaxRateKey = keyof typeof LiqPayTaxRates
+export type TaxRateKey = keyof typeof TaxRates
 
 /**
  * Fiscal tax object representing a single tax rate from LiqPay.
@@ -35,12 +35,12 @@ export type LiqPayTaxRateKey = keyof typeof LiqPayTaxRates
  * const tax: LiqPayFiscalTax = LiqPayTaxRates.VAT20;
  * ```
  */
-export type LiqPayFiscalTax = (typeof LiqPayTaxRates)[LiqPayTaxRateKey]
+export type FiscalTax = (typeof TaxRates)[TaxRateKey]
 
 /**
  * Transaction type
  */
-export enum LiqPayActionEnum {
+export enum ActionEnum {
 	PAY = 'pay',
 	HOLD = 'hold',
 	PAYSPLIT = 'paysplit',
@@ -54,12 +54,12 @@ export enum LiqPayActionEnum {
 /**
  * Transaction type
  */
-export type LiqPayAction = `${LiqPayActionEnum}`
+export type Action = `${ActionEnum}`
 
 /**
  * Payment currency
  */
-export enum LiqPayCurrencyEnum {
+export enum CurrencyEnum {
 	USD = 'USD',
 	EUR = 'EUR',
 	UAH = 'UAH',
@@ -68,12 +68,12 @@ export enum LiqPayCurrencyEnum {
 /**
  * Payment currency
  */
-export type LiqPayCurrency = `${LiqPayCurrencyEnum}`
+export type Currency = `${CurrencyEnum}`
 
 /**
  * Payment methods to be displayed at checkout
  */
-export enum LiqPayPaytypeEnum {
+export enum PaytypeEnum {
 	APAY = 'apay',
 	GPAY = 'gpay',
 	CARD = 'card',
@@ -89,17 +89,17 @@ export enum LiqPayPaytypeEnum {
 /**
  * Payment methods to be displayed at checkout
  */
-export type LiqPayPaytype = `${LiqPayPaytypeEnum}`
+export type Paytype = `${PaytypeEnum}`
 
 /**
  * Code that represents whether 3D-Secure verification was performed during payment
  */
-export type LiqPayMpiEci = 5 | 6 | 7
+export type MpiEci = 5 | 6 | 7
 
 /**
  * Resolved payment statuses
  */
-export enum LiqPayResolvedPaymentStatusEnum {
+export enum ResolvedPaymentStatusEnum {
 	ERROR = 'error',
 	FAILURE = 'failure',
 	REVERSED = 'reversed',
@@ -111,12 +111,12 @@ export enum LiqPayResolvedPaymentStatusEnum {
 /**
  * Resolved payment statuses
  */
-export type LiqPayResolvedPaymentStatus = `${LiqPayResolvedPaymentStatusEnum}`
+export type ResolvedPaymentStatus = `${ResolvedPaymentStatusEnum}`
 
 /**
  * Statuses that require payment confirmation
  */
-export enum LiqPayUnresolvedPaymentStatusEnum {
+export enum UnresolvedPaymentStatusEnum {
 	DS3_VERIFY = '3ds_verify',
 	CAPTCHA_VERIFY = 'captcha_verify',
 	CVV_VERIFY = 'cvv_verify',
@@ -137,13 +137,12 @@ export enum LiqPayUnresolvedPaymentStatusEnum {
 /**
  * Statuses that require payment confirmation
  */
-export type LiqPayUnresolvedPaymentStatus =
-	`${LiqPayUnresolvedPaymentStatusEnum}`
+export type UnresolvedPaymentStatus = `${UnresolvedPaymentStatusEnum}`
 
 /**
  * Other payment statuses
  */
-export enum LiqPayOtherPaymentStatusEnum {
+export enum OtherPaymentStatusEnum {
 	CASH_WAIT = 'cash_wait',
 	HOLD_WAIT = 'hold_wait',
 	INVOICE_WAIT = 'invoice_wait',
@@ -161,20 +160,20 @@ export enum LiqPayOtherPaymentStatusEnum {
 /**
  * Other payment statuses
  */
-export type LiqPayOtherPaymentStatus = `${LiqPayOtherPaymentStatusEnum}`
+export type OtherPaymentStatus = `${OtherPaymentStatusEnum}`
 
 /**
  * Payment status
  */
-export type LiqPayPaymentStatus =
-	| LiqPayResolvedPaymentStatus
-	| LiqPayUnresolvedPaymentStatus
-	| LiqPayOtherPaymentStatus
+export type PaymentStatus =
+	| ResolvedPaymentStatus
+	| UnresolvedPaymentStatus
+	| OtherPaymentStatus
 
 /**
  * Payer of the acquiring fee
  */
-export enum LiqPayCommisionPayerEnum {
+export enum CommisionPayerEnum {
 	SENDER = 'sender',
 	RECEIVER = 'receiver',
 }
@@ -182,12 +181,12 @@ export enum LiqPayCommisionPayerEnum {
 /**
  * Payer of the acquiring fee
  */
-export type LiqPayCommisionPayer = `${LiqPayCommisionPayerEnum}`
+export type CommisionPayer = `${CommisionPayerEnum}`
 
 /**
  * Client language
  */
-export enum LiqPayLanguageEnum {
+export enum LanguageEnum {
 	UK = 'uk',
 	EN = 'en',
 }
@@ -195,12 +194,12 @@ export enum LiqPayLanguageEnum {
 /**
  * Client language
  */
-export type LiqPayLanguage = `${LiqPayLanguageEnum}`
+export type Language = `${LanguageEnum}`
 
 /**
  * The frequency of funds write-off
  */
-export enum LiqPaySubscribePeriodicityEnum {
+export enum SubscribePeriodicityEnum {
 	DAY = 'day',
 	WEEK = 'week',
 	MONTH = 'month',
@@ -210,12 +209,12 @@ export enum LiqPaySubscribePeriodicityEnum {
 /**
  * The frequency of funds write-off
  */
-export type LiqPaySubscribePeriodicity = `${LiqPaySubscribePeriodicityEnum}`
+export type SubscribePeriodicity = `${SubscribePeriodicityEnum}`
 
 /**
  * Bonus type
  */
-export enum LiqPayBonusTypeEnum {
+export enum BonusTypeEnum {
 	BONUSPLUS = 'bonusplus',
 	DISCOUNT_CLUB = 'discount_club',
 	PERSONAL = 'personal',
@@ -225,12 +224,12 @@ export enum LiqPayBonusTypeEnum {
 /**
  * Bonus type
  */
-export type LiqPayBonusType = `${LiqPayBonusTypeEnum}`
+export type BonusType = `${BonusTypeEnum}`
 
 /**
  * Result of request execution
  */
-export enum LiqPayRequestResultEnum {
+export enum RequestResultEnum {
 	OK = 'ok',
 	ERROR = 'error',
 }
@@ -238,12 +237,12 @@ export enum LiqPayRequestResultEnum {
 /**
  * Result of request execution
  */
-export type LiqPayRequestResult = `${LiqPayRequestResultEnum}`
+export type RequestResult = `${RequestResultEnum}`
 
 /**
  * Units of measurement of goods
  */
-export enum LiqPayUnitEnum {
+export enum UnitEnum {
 	meter = '10001',
 	square_meter = '10002',
 	cubic_meter = '10003',
@@ -296,4 +295,4 @@ export enum LiqPayUnitEnum {
 /**
  * Units of measurement of goods
  */
-export type LiqPayUnit = `${LiqPayUnitEnum}`
+export type Unit = `${UnitEnum}`

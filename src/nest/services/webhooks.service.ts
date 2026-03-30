@@ -1,7 +1,7 @@
 import { LiqPayClient } from '../../core/clients'
 import { LiqPayEnvelope } from '../../core/types/base'
 
-export class LiqPayWebhooksService {
+export class WebhooksService {
 	public constructor(private readonly client: LiqPayClient) {}
 
 	public async parseCheckoutCallback(envelope: LiqPayEnvelope) {

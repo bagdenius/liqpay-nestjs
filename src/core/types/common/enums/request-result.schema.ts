@@ -1,4 +1,4 @@
 import { z } from 'zod'
 
-export const LiqPayRequestResultSchema = z.enum(['ok', 'error'])
-export type LiqPayRequestResult = z.infer<typeof LiqPayRequestResultSchema>
+export const RequestResultSchema = z.enum(['ok', 'error'])
+export type RequestResult = z.infer<typeof RequestResultSchema>

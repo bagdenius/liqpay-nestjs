@@ -1,18 +1,18 @@
 import {
-	LiqPayAction,
-	LiqPayBonusType,
-	LiqPayCurrency,
-	LiqPayLanguage,
-	LiqPayMpiEci,
-	LiqPayPaymentStatus,
-	LiqPayPaytype,
-	LiqPayRequestResult,
+	Action,
+	BonusType,
+	Currency,
+	Language,
+	MpiEci,
+	PaymentStatus,
+	Paytype,
+	RequestResult,
 } from './types'
 
 /**
  * Contract of data that comes in response to a request to get payment status
  */
-export interface LiqPayPaymentStatusResponse {
+export interface PaymentStatusResponse {
 	/**
 	 * Acquirer ID
 	 */
@@ -28,7 +28,7 @@ export interface LiqPayPaymentStatusResponse {
 	 * - `auth` - card pre-authorization
 	 * - `regular` - regular payment
 	 */
-	action: LiqPayAction
+	action: Action
 
 	/**
 	 * Agent commission in payment currency
@@ -73,7 +73,7 @@ export interface LiqPayPaymentStatusResponse {
 	/**
 	 * Bonus type, possible values: `bonusplus`, `discount_club`, `personal`, `promo`
 	 */
-	bonus_type: LiqPayBonusType
+	bonus_type: BonusType
 
 	/**
 	 * Sender card token
@@ -103,17 +103,17 @@ export interface LiqPayPaymentStatusResponse {
 	/**
 	 * Payment currency
 	 */
-	currency: LiqPayCurrency
+	currency: Currency
 
 	/**
 	 * Transaction currency credit
 	 */
-	currency_credit: LiqPayCurrency
+	currency_credit: Currency
 
 	/**
 	 * Transaction currency debit
 	 */
-	currency_debit: LiqPayCurrency
+	currency_debit: Currency
 
 	/**
 	 * Payment comment
@@ -143,12 +143,12 @@ export interface LiqPayPaymentStatusResponse {
 	/**
 	 * Client language: `uk`, `en`
 	 */
-	language: LiqPayLanguage
+	language: Language
 
 	/**
 	 * `Order_id` of payment in the LiqPay system
 	 */
-	liqpay_order_id: string
+	_order_id: string
 
 	/**
 	 * Payment in installments sign
@@ -161,7 +161,7 @@ export interface LiqPayPaymentStatusResponse {
 	 * - `6` - the payer's card issuer does not support 3D-Secure technology
 	 * - `7` - the transaction was completed without 3D-Secure
 	 */
-	mpi_eci: LiqPayMpiEci
+	mpi_eci: MpiEci
 
 	/**
 	 * Payment `Order_id`
@@ -181,7 +181,7 @@ export interface LiqPayPaymentStatusResponse {
 	 * - `invoice` - invoice to e-mail
 	 * - `qr` - scan qr code
 	 */
-	paytype: LiqPayPaytype
+	paytype: Paytype
 
 	/**
 	 * Store public key
@@ -196,7 +196,7 @@ export interface LiqPayPaymentStatusResponse {
 	/**
 	 * Result of query execution: `ok`, `error`
 	 */
-	result: LiqPayRequestResult
+	result: RequestResult
 
 	/**
 	 * Unique transaction number in the authorization and settlement system of the servicing bank `Retrieval Reference number`
@@ -261,7 +261,7 @@ export interface LiqPayPaymentStatusResponse {
 	/**
 	 * Payment status
 	 */
-	status: LiqPayPaymentStatus
+	status: PaymentStatus
 
 	/**
 	 * An additional payment status indicating that the current payment is reserved for a refund on your store. Possible values: `true` - the payment is reserved for a refund

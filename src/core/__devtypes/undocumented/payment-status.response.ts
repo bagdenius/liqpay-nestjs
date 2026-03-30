@@ -1,18 +1,18 @@
 import {
-	LiqPayAction,
-	LiqPayBonusType,
-	LiqPayCurrency,
-	LiqPayLanguage,
-	LiqPayMpiEci,
-	LiqPayPaymentStatus,
-	LiqPayPaytype,
-	LiqPayRequestResult,
+	Action,
+	BonusType,
+	Currency,
+	Language,
+	MpiEci,
+	PaymentStatus,
+	Paytype,
+	RequestResult,
 } from './types'
 
-export interface LiqPayPaymentStatusResponse {
+export interface PaymentStatusResponse {
 	version: 7
 	public_key: string
-	action: LiqPayAction
+	action: Action
 	acq_id: number
 	agent_commission: number
 	amount: number
@@ -22,29 +22,29 @@ export interface LiqPayPaymentStatusResponse {
 	authcode_credit: string
 	authcode_debit: string
 	bonus_procent: number
-	bonus_type: LiqPayBonusType
+	bonus_type: BonusType
 	card_token: string
 	commission_credit: number
 	commission_debit: number
 	confirm_phone: string
 	create_date: string
-	currency: LiqPayCurrency
-	currency_credit: LiqPayCurrency
-	currency_debit: LiqPayCurrency
+	currency: Currency
+	currency_credit: Currency
+	currency_debit: Currency
 	description: string
 	end_date: string
 	info: string
 	ip: string
 	is_3ds: boolean
-	language: LiqPayLanguage
-	liqpay_order_id: string
+	language: Language
+	_order_id: string
 	moment_part: boolean
-	mpi_eci: LiqPayMpiEci
+	mpi_eci: MpiEci
 	order_id: string
 	payment_id: number
-	paytype: LiqPayPaytype
+	paytype: Paytype
 	receiver_commission: number
-	result: LiqPayRequestResult
+	result: RequestResult
 	rrn_credit: string
 	rrn_debit: string
 	sender_bonus: number
@@ -57,7 +57,7 @@ export interface LiqPayPaymentStatusResponse {
 	sender_first_name: string
 	sender_last_name: string
 	sender_phone: string
-	status: LiqPayPaymentStatus
+	status: PaymentStatus
 	wait_reserve_status?: boolean
 	transaction_id: number
 	type: string

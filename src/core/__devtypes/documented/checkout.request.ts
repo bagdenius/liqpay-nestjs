@@ -1,18 +1,18 @@
-import { LiqPayDetailAddenda } from './detail-addenda'
-import { LiqPayFiscalData } from './fiscal-data'
-import { LiqPaySplitRule } from './split-rule'
+import { DetailAddenda } from './detail-addenda'
+import { FiscalData } from './fiscal-data'
+import { SplitRule } from './split-rule'
 import {
-	LiqPayAction,
-	LiqPayCurrency,
-	LiqPayLanguage,
-	LiqPayPaytype,
-	LiqPaySubscribePeriodicity,
+	Action,
+	Currency,
+	Language,
+	Paytype,
+	SubscribePeriodicity,
 } from './types'
 
 /**
  * Contract of data that is passed when forming a payment request as `base64` encoded string data when calling the LiqPay API
  */
-export interface LiqPayCheckoutRequest {
+export interface CheckoutRequest {
 	/**
 	 * @group shared
 	 */
@@ -40,7 +40,7 @@ export interface LiqPayCheckoutRequest {
 	 * - `subscribe` - regular payment
 	 * - `paydonate` - donation
 	 */
-	action: LiqPayAction
+	action: Action
 
 	/**
 	 * Payment amount. For example: `5`, `7.34`
@@ -50,7 +50,7 @@ export interface LiqPayCheckoutRequest {
 	/**
 	 * Payment currency. Possible values: `USD`, `EUR`, `UAH`
 	 */
-	currency: LiqPayCurrency
+	currency: Currency
 
 	/**
 	 * Payment purpose
@@ -78,7 +78,7 @@ export interface LiqPayCheckoutRequest {
 	/**
 	 * Client language: `uk`, `en`
 	 */
-	language?: LiqPayLanguage
+	language?: Language
 
 	/**
 	 * Parameter that transmits payment methods to be displayed at checkout.
@@ -93,7 +93,7 @@ export interface LiqPayCheckoutRequest {
 	 * - `invoice` - invoice to e-mail
 	 * - `qr` - scanning a QR code
 	 */
-	paytypes?: LiqPayPaytype[]
+	paytypes?: Paytype[]
 
 	/**
 	 * @group checkout flow
@@ -116,7 +116,7 @@ export interface LiqPayCheckoutRequest {
 	/**
 	 * Data for fiscalization
 	 */
-	rro_info?: LiqPayFiscalData
+	rro_info?: FiscalData
 
 	/**
 	 * @group sender
@@ -173,7 +173,7 @@ export interface LiqPayCheckoutRequest {
 	 * - `month` - once a month
 	 * - `year` - once a year, раз
 	 */
-	subscribe_periodicity?: LiqPaySubscribePeriodicity
+	subscribe_periodicity?: SubscribePeriodicity
 
 	/**
 	 * Payment with splitting the amount into several recipients. This parameter specifies a `JSON` array with payment splitting rules.
@@ -211,7 +211,7 @@ export interface LiqPayCheckoutRequest {
 	 * ]
 	 * ```
 	 */
-	split_rules?: LiqPaySplitRule[]
+	split_rules?: SplitRule[]
 
 	/**
 	 * @group one-click payment / tokenization
@@ -284,5 +284,5 @@ export interface LiqPayCheckoutRequest {
 	 * The `dae` parameter is a `JSON` string to which `base64` has been applied.
 	 * It can contain the parameters given in the example below.
 	 */
-	dae?: LiqPayDetailAddenda
+	dae?: DetailAddenda
 }

@@ -1,4 +1,4 @@
-import { type DynamicModule, Global, Module } from '@nestjs/common'
+import { type DynamicModule, Module } from '@nestjs/common'
 
 import { LIQPAY_OPTIONS } from './constants'
 import type { LiqPayAsyncOptions, LiqPayOptions } from './interfaces'

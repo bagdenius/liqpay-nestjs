@@ -1,11 +1,9 @@
 import { z } from 'zod'
 
-export const LiqPaySubscribePeriodicitySchema = z.enum([
+export const SubscribePeriodicitySchema = z.enum([
 	'day',
 	'week',
 	'month',
 	'year',
 ])
-export type LiqPaySubscribePeriodicity = z.infer<
-	typeof LiqPaySubscribePeriodicitySchema
->
+export type SubscribePeriodicity = z.infer<typeof SubscribePeriodicitySchema>

@@ -1,17 +1,14 @@
-import { LiqPayCallResult, LiqPayEnvelope } from '../types/base'
-import {
-	LiqPayCheckoutCallback,
-	LiqPayCheckoutCallbackSchema,
-} from '../types/checkout'
+import { LiqPayEnvelope, Result } from '../types/base'
+import { CheckoutCallback, CheckoutCallbackSchema } from '../types/checkout'
 
-import { LiqPayUtilsClient } from './utils.client'
+import { UtilsClient } from './utils.client'
 
-export class LiqPayWebhooksClient {
-	constructor(private readonly utils: LiqPayUtilsClient) {}
+export class WebhooksClient {
+	constructor(private readonly utils: UtilsClient) {}
 
 	public parseCheckoutCallback(
 		envelope: LiqPayEnvelope,
-	): LiqPayCallResult<LiqPayCheckoutCallback> {
-		return this.utils.parseEnvelope(envelope, LiqPayCheckoutCallbackSchema)
+	): Result<CheckoutCallback> {
+		return this.utils.parseEnvelope(envelope, CheckoutCallbackSchema)
 	}
 }

@@ -1,15 +1,15 @@
-export const LiqPayTaxRates = {
+export const TaxRates = {
 	NO_VAT: { letter: 'А', name: 'Без ПДВ 0%', type: 0, prc: 0 } as const,
 	VAT20: { letter: 'Б', name: 'ПДВ 20%', type: 0, prc: 20 } as const,
 	VAT7: { letter: 'В', name: 'ПДВ 7%', type: 0, prc: 7 } as const,
 	EXCISE5: { letter: 'Г', name: 'АКЦИЗ 5%', type: 1, prc: 5 } as const,
 } as const
 
-export type LiqPayTaxRateKey = keyof typeof LiqPayTaxRates
+export type TaxRateKey = keyof typeof TaxRates
 
-export type LiqPayFiscalTax = (typeof LiqPayTaxRates)[LiqPayTaxRateKey]
+export type FiscalTax = (typeof TaxRates)[TaxRateKey]
 
-export enum LiqPayActionEnum {
+export enum ActionEnum {
 	PAY = 'pay',
 	HOLD = 'hold',
 	PAYSPLIT = 'paysplit',
@@ -19,16 +19,16 @@ export enum LiqPayActionEnum {
 	REGULAR = 'regular',
 	STATUS = 'status',
 }
-export type LiqPayAction = `${LiqPayActionEnum}`
+export type Action = `${ActionEnum}`
 
-export enum LiqPayCurrencyEnum {
+export enum CurrencyEnum {
 	USD = 'USD',
 	EUR = 'EUR',
 	UAH = 'UAH',
 }
-export type LiqPayCurrency = `${LiqPayCurrencyEnum}`
+export type Currency = `${CurrencyEnum}`
 
-export enum LiqPayPaytypeEnum {
+export enum PaytypeEnum {
 	APAY = 'apay',
 	GPAY = 'gpay',
 	CARD = 'card',
@@ -40,11 +40,11 @@ export enum LiqPayPaytypeEnum {
 	INVOICE = 'invoice',
 	QR = 'qr',
 }
-export type LiqPayPaytype = `${LiqPayPaytypeEnum}`
+export type Paytype = `${PaytypeEnum}`
 
-export type LiqPayMpiEci = 5 | 6 | 7
+export type MpiEci = 5 | 6 | 7
 
-export enum LiqPayResolvedPaymentStatusEnum {
+export enum ResolvedPaymentStatusEnum {
 	ERROR = 'error',
 	FAILURE = 'failure',
 	REVERSED = 'reversed',
@@ -52,9 +52,9 @@ export enum LiqPayResolvedPaymentStatusEnum {
 	SUCCESS = 'success',
 	UNSUBSCRIBED = 'unsubscribed',
 }
-export type LiqPayResolvedPaymentStatus = `${LiqPayResolvedPaymentStatusEnum}`
+export type ResolvedPaymentStatus = `${ResolvedPaymentStatusEnum}`
 
-export enum LiqPayUnresolvedPaymentStatusEnum {
+export enum UnresolvedPaymentStatusEnum {
 	DS3_VERIFY = '3ds_verify',
 	CAPTCHA_VERIFY = 'captcha_verify',
 	CVV_VERIFY = 'cvv_verify',
@@ -71,10 +71,9 @@ export enum LiqPayUnresolvedPaymentStatusEnum {
 	P24_VERIFY = 'p24_verify',
 	MP_VERIFY = 'mp_verify',
 }
-export type LiqPayUnresolvedPaymentStatus =
-	`${LiqPayUnresolvedPaymentStatusEnum}`
+export type UnresolvedPaymentStatus = `${UnresolvedPaymentStatusEnum}`
 
-export enum LiqPayOtherPaymentStatusEnum {
+export enum OtherPaymentStatusEnum {
 	CASH_WAIT = 'cash_wait',
 	HOLD_WAIT = 'hold_wait',
 	INVOICE_WAIT = 'invoice_wait',
@@ -88,48 +87,48 @@ export enum LiqPayOtherPaymentStatusEnum {
 	WAIT_SECURE = 'wait_secure',
 	TRY_AGAIN = 'try_again',
 }
-export type LiqPayOtherPaymentStatus = `${LiqPayOtherPaymentStatusEnum}`
+export type OtherPaymentStatus = `${OtherPaymentStatusEnum}`
 
-export type LiqPayPaymentStatus =
-	| LiqPayResolvedPaymentStatus
-	| LiqPayUnresolvedPaymentStatus
-	| LiqPayOtherPaymentStatus
+export type PaymentStatus =
+	| ResolvedPaymentStatus
+	| UnresolvedPaymentStatus
+	| OtherPaymentStatus
 
-export enum LiqPayCommisionPayerEnum {
+export enum CommisionPayerEnum {
 	SENDER = 'sender',
 	RECEIVER = 'receiver',
 }
-export type LiqPayCommisionPayer = `${LiqPayCommisionPayerEnum}`
+export type CommisionPayer = `${CommisionPayerEnum}`
 
-export enum LiqPayLanguageEnum {
+export enum LanguageEnum {
 	UK = 'uk',
 	EN = 'en',
 }
-export type LiqPayLanguage = `${LiqPayLanguageEnum}`
+export type Language = `${LanguageEnum}`
 
-export enum LiqPaySubscribePeriodicityEnum {
+export enum SubscribePeriodicityEnum {
 	DAY = 'day',
 	WEEK = 'week',
 	MONTH = 'month',
 	YEAR = 'year',
 }
-export type LiqPaySubscribePeriodicity = `${LiqPaySubscribePeriodicityEnum}`
+export type SubscribePeriodicity = `${SubscribePeriodicityEnum}`
 
-export enum LiqPayBonusTypeEnum {
+export enum BonusTypeEnum {
 	BONUSPLUS = 'bonusplus',
 	DISCOUNT_CLUB = 'discount_club',
 	PERSONAL = 'personal',
 	PROMO = 'promo',
 }
-export type LiqPayBonusType = `${LiqPayBonusTypeEnum}`
+export type BonusType = `${BonusTypeEnum}`
 
-export enum LiqPayRequestResultEnum {
+export enum RequestResultEnum {
 	OK = 'ok',
 	ERROR = 'error',
 }
-export type LiqPayRequestResult = `${LiqPayRequestResultEnum}`
+export type RequestResult = `${RequestResultEnum}`
 
-export enum LiqPayUnitEnum {
+export enum UnitEnum {
 	meter = '10001',
 	square_meter = '10002',
 	cubic_meter = '10003',
@@ -178,4 +177,4 @@ export enum LiqPayUnitEnum {
 	minute = '10046',
 	milliliter = '10047',
 }
-export type LiqPayUnit = `${LiqPayUnitEnum}`
+export type Unit = `${UnitEnum}`

@@ -2,15 +2,15 @@ import { createHash, timingSafeEqual } from 'node:crypto'
 import z from 'zod'
 
 import {
-	LiqPayCallResult,
 	LiqPayEnvelope,
 	LiqPayRawRequest,
 	LiqPayRequest,
 	LiqPayResponse,
+	Result,
 } from '../types/base'
 import { LiqPayError, LiqPayErrorResponseSchema } from '../types/error'
 
-export class LiqPayUtilsClient {
+export class UtilsClient {
 	constructor(
 		public readonly publicKey: string,
 		public readonly privateKey: string,
@@ -53,14 +53,11 @@ export class LiqPayUtilsClient {
 	public createError(
 		code: LiqPayError['code'],
 		description: string,
-	): LiqPayCallResult<never> {
+	): Result<never> {
 		return { data: null, error: { code, description } }
 	}
 
-	public parseData<T>(
-		schema: z.ZodType<T>,
-		data: unknown,
-	): LiqPayCallResult<T> {
+	public parseData<T>(schema: z.ZodType<T>, data: unknown): Result<T> {
 		const error = this.parseError(data)
 		if (error) return error
 		const parsed = schema.safeParse(data)
@@ -72,7 +69,7 @@ export class LiqPayUtilsClient {
 		return { data: parsed.data, error: null }
 	}
 
-	public parseError(data: unknown): LiqPayCallResult<never> | null {
+	public parseError(data: unknown): Result<never> | null {
 		const parsed = LiqPayErrorResponseSchema.safeParse(data)
 		if (!parsed.success) return null
 		return this.createError(parsed.data.err_code, parsed.data.err_description)
@@ -81,7 +78,7 @@ export class LiqPayUtilsClient {
 	public parseEnvelope<TResponse extends LiqPayResponse>(
 		envelope: LiqPayEnvelope,
 		schema: z.ZodType<TResponse>,
-	): LiqPayCallResult<TResponse> {
+	): Result<TResponse> {
 		if (!this.isValidSignature(envelope))
 			return this.createError('invalid_signature', 'Invalid signature')
 		let rawData: unknown
@@ -102,7 +99,7 @@ export class LiqPayUtilsClient {
 		rawSchema: z.ZodType<TRawRequest>,
 		responseSchema: z.ZodType<TResponse>,
 		url: string,
-	): Promise<LiqPayCallResult<TResponse>> {
+	): Promise<Result<TResponse>> {
 		const raw = rawSchema.parse(payload)
 		const envelope = this.getCredentials(raw)
 		const response = await fetch(url, {

@@ -1,4 +1,4 @@
 import { z } from 'zod'
 
-export const LiqPayCommisionPayerSchema = z.enum(['sender', 'receiver'])
-export type LiqPayCommisionPayer = z.infer<typeof LiqPayCommisionPayerSchema>
+export const CommisionPayerSchema = z.enum(['sender', 'receiver'])
+export type CommisionPayer = z.infer<typeof CommisionPayerSchema>

@@ -1,23 +1,21 @@
-import { LiqPayCallResult } from '../types/base'
+import { Result } from '../types/base'
 import {
-	type LiqPayCheckoutRequest,
-	LiqPayRawCheckoutRequestSchema,
+	type CheckoutRequest,
+	RawCheckoutRequestSchema,
 } from '../types/checkout'
 import {
-	LiqPayPaymentStatusResponse,
-	LiqPayPaymentStatusResponseSchema,
-	LiqPayRawPaymentStatusRequestSchema,
+	PaymentStatusResponse,
+	PaymentStatusResponseSchema,
+	RawPaymentStatusRequestSchema,
 } from '../types/payment-status'
-import { LIQPAY_CHECKOUT_URL, LIQPAY_REQUEST_URL } from '../url.type'
+import { CHECKOUT_URL, REQUEST_URL } from '../url.type'
 
-import { LiqPayUtilsClient } from './utils.client'
+import { UtilsClient } from './utils.client'
 
-export class LiqPayPaymentsClient {
-	constructor(private readonly utils: LiqPayUtilsClient) {}
+export class PaymentsClient {
+	constructor(private readonly utils: UtilsClient) {}
 
-	private fulfillPayload(
-		payload: LiqPayCheckoutRequest,
-	): LiqPayCheckoutRequest {
+	private fulfillPayload(payload: CheckoutRequest): CheckoutRequest {
 		return {
 			...payload,
 			version: 7,
@@ -26,33 +24,33 @@ export class LiqPayPaymentsClient {
 		}
 	}
 
-	private prepareCheckout(payload: LiqPayCheckoutRequest) {
+	private prepareCheckout(payload: CheckoutRequest) {
 		const fullfilled = this.fulfillPayload(payload)
-		const raw = LiqPayRawCheckoutRequestSchema.parse(fullfilled)
+		const raw = RawCheckoutRequestSchema.parse(fullfilled)
 		const { data, signature } = this.utils.getCredentials(raw)
 		return { fullfilled, data, signature }
 	}
 
-	public getCheckoutUrl(payload: LiqPayCheckoutRequest): string {
+	public getCheckoutUrl(payload: CheckoutRequest): string {
 		const { data, signature } = this.prepareCheckout(payload)
-		return `${LIQPAY_CHECKOUT_URL}?data=${data}&signature=${signature}`
+		return `${CHECKOUT_URL}?data=${data}&signature=${signature}`
 	}
 
 	public create(
-		payload: LiqPayCheckoutRequest,
-	): LiqPayCheckoutRequest & { checkoutUrl: string } {
+		payload: CheckoutRequest,
+	): CheckoutRequest & { checkoutUrl: string } {
 		const fullfilled = this.fulfillPayload(payload)
 		return { ...fullfilled, checkoutUrl: this.getCheckoutUrl(fullfilled) }
 	}
 
 	public getCheckoutFormButton(
-		payload: LiqPayCheckoutRequest,
+		payload: CheckoutRequest,
 		buttonText: string = 'Pay',
 		buttonColor: string = '#77CC5D',
 	): string {
 		const { data, signature } = this.prepareCheckout(payload)
 		return `
-      <form method="POST" action="${LIQPAY_CHECKOUT_URL}" accept-charset="utf-8">
+      <form method="POST" action="${CHECKOUT_URL}" accept-charset="utf-8">
         <input type="hidden" name="data" value="${data}" />
         <input type="hidden" name="signature" value="${signature}" />
         <script type="text/javascript" src="https://static.liqpay.ua/libjs/sdk_button.js"></script>
@@ -63,12 +61,12 @@ export class LiqPayPaymentsClient {
 
 	public async getStatus(
 		orderId: string,
-	): Promise<LiqPayCallResult<LiqPayPaymentStatusResponse>> {
+	): Promise<Result<PaymentStatusResponse>> {
 		return await this.utils.call(
 			{ action: 'status', orderId },
-			LiqPayRawPaymentStatusRequestSchema,
-			LiqPayPaymentStatusResponseSchema,
-			LIQPAY_REQUEST_URL,
+			RawPaymentStatusRequestSchema,
+			PaymentStatusResponseSchema,
+			REQUEST_URL,
 		)
 	}
 }

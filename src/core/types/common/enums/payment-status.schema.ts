@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const LiqPayResolvedPaymentStatusSchema = z.enum([
+export const ResolvedPaymentStatusSchema = z.enum([
 	'error',
 	'failure',
 	'reversed',
@@ -8,11 +8,9 @@ export const LiqPayResolvedPaymentStatusSchema = z.enum([
 	'success',
 	'unsubscribed',
 ])
-export type LiqPayResolvedPaymentStatus = z.infer<
-	typeof LiqPayResolvedPaymentStatusSchema
->
+export type ResolvedPaymentStatus = z.infer<typeof ResolvedPaymentStatusSchema>
 
-export const LiqPayUnresolvedPaymentStatusSchema = z.enum([
+export const UnresolvedPaymentStatusSchema = z.enum([
 	'3ds_verify',
 	'captcha_verify',
 	'cvv_verify',
@@ -29,11 +27,11 @@ export const LiqPayUnresolvedPaymentStatusSchema = z.enum([
 	'p24_verify',
 	'mp_verify',
 ])
-export type LiqPayUnresolvedPaymentStatus = z.infer<
-	typeof LiqPayUnresolvedPaymentStatusSchema
+export type UnresolvedPaymentStatus = z.infer<
+	typeof UnresolvedPaymentStatusSchema
 >
 
-export const LiqPayOtherPaymentStatusSchema = z.enum([
+export const OtherPaymentStatusSchema = z.enum([
 	'cash_wait',
 	'hold_wait',
 	'invoice_wait',
@@ -47,13 +45,11 @@ export const LiqPayOtherPaymentStatusSchema = z.enum([
 	'wait_secure',
 	'try_again',
 ])
-export type LiqPayOtherPaymentStatus = z.infer<
-	typeof LiqPayOtherPaymentStatusSchema
->
+export type OtherPaymentStatus = z.infer<typeof OtherPaymentStatusSchema>
 
-export const LiqPayPaymentStatusSchema = z.union([
-	LiqPayResolvedPaymentStatusSchema,
-	LiqPayUnresolvedPaymentStatusSchema,
-	LiqPayOtherPaymentStatusSchema,
+export const PaymentStatusSchema = z.union([
+	ResolvedPaymentStatusSchema,
+	UnresolvedPaymentStatusSchema,
+	OtherPaymentStatusSchema,
 ])
-export type LiqPayPaymentStatus = z.infer<typeof LiqPayPaymentStatusSchema>
+export type PaymentStatus = z.infer<typeof PaymentStatusSchema>

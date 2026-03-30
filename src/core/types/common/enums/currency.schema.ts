@@ -1,4 +1,4 @@
 import z from 'zod'
 
-export const LiqPayCurrencySchema = z.enum(['USD', 'EUR', 'UAH'])
-export type LiqPayCurrency = z.infer<typeof LiqPayCurrencySchema>
+export const CurrencySchema = z.enum(['USD', 'EUR', 'UAH'])
+export type Currency = z.infer<typeof CurrencySchema>

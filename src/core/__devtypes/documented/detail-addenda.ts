@@ -1,7 +1,7 @@
 /**
  * Contract of data of Long Detail Addenda entry. __Required for merchants with MCC 4511__.
  */
-export interface LiqPayDetailAddenda {
+export interface DetailAddenda {
 	/**
 	 * Airline abbreviation, max 4 characters
 	 */

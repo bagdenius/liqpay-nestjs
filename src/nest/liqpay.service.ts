@@ -4,12 +4,12 @@ import { LiqPayClient } from '../core/clients'
 
 import { LIQPAY_OPTIONS } from './constants'
 import type { LiqPayOptions } from './interfaces'
-import { LiqPayPaymentsService, LiqPayWebhooksService } from './services'
+import { PaymentsService, WebhooksService } from './services'
 
 @Injectable()
 export class LiqpayService {
-	public readonly payments: LiqPayPaymentsService
-	public readonly webhooks: LiqPayWebhooksService
+	public readonly payments: PaymentsService
+	public readonly webhooks: WebhooksService
 
 	public constructor(
 		@Inject(LIQPAY_OPTIONS)
@@ -22,7 +22,7 @@ export class LiqpayService {
 			resultUrl ?? '',
 			serverUrl ?? '',
 		)
-		this.payments = new LiqPayPaymentsService(client)
-		this.webhooks = new LiqPayWebhooksService(client)
+		this.payments = new PaymentsService(client)
+		this.webhooks = new WebhooksService(client)
 	}
 }

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const LiqPayDetailAddendaSchema = z.object({
+export const DetailAddendaSchema = z.object({
 	airLine: z.string().max(4),
 	ticketNumber: z.string().max(15),
 	passengerName: z.string().max(29),
@@ -10,4 +10,4 @@ export const LiqPayDetailAddendaSchema = z.object({
 	departureDate: z.string().max(6),
 })
 
-export type LiqPayDetailAddenda = z.infer<typeof LiqPayDetailAddendaSchema>
+export type DetailAddenda = z.infer<typeof DetailAddendaSchema>

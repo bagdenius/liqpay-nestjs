@@ -1,9 +1,9 @@
 import { z } from 'zod'
 
-export const LiqPayBonusTypeSchema = z.enum([
+export const BonusTypeSchema = z.enum([
 	'bonusplus',
 	'discount_club',
 	'personal',
 	'promo',
 ])
-export type LiqPayBonusType = z.infer<typeof LiqPayBonusTypeSchema>
+export type BonusType = z.infer<typeof BonusTypeSchema>

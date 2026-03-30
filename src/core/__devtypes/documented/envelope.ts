@@ -3,7 +3,7 @@
  *
  * Contains the payload as a stringified and encrypted JSON (`data`) and a cryptographic `signature`.
  */
-export interface LiqPayEnvelope {
+export interface Envelope {
 	/**
 	 * Stringified and encrypted payload
 	 */

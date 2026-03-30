@@ -3,7 +3,7 @@ import { z } from 'zod'
 /**
  * Units of measurement of goods
  */
-export enum LiqPayUnitEnum {
+export enum UnitEnum {
 	meter = '10001',
 	square_meter = '10002',
 	cubic_meter = '10003',
@@ -52,5 +52,5 @@ export enum LiqPayUnitEnum {
 	minute = '10046',
 	milliliter = '10047',
 }
-export const LiqPayUnitSchema = z.enum(LiqPayUnitEnum)
-export type LiqPayUnit = z.infer<typeof LiqPayUnitSchema>
+export const UnitSchema = z.enum(UnitEnum)
+export type Unit = z.infer<typeof UnitSchema>

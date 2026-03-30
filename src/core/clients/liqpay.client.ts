@@ -1,10 +1,10 @@
-import { LiqPayPaymentsClient } from './payments.client'
-import { LiqPayUtilsClient } from './utils.client'
-import { LiqPayWebhooksClient } from './webhooks.client'
+import { PaymentsClient } from './payments.client'
+import { UtilsClient } from './utils.client'
+import { WebhooksClient } from './webhooks.client'
 
 export class LiqPayClient {
-	public payments: LiqPayPaymentsClient
-	public webhooks: LiqPayWebhooksClient
+	public payments: PaymentsClient
+	public webhooks: WebhooksClient
 
 	constructor(
 		publicKey: string,
@@ -12,13 +12,8 @@ export class LiqPayClient {
 		resultUrl: string,
 		serverUrl: string,
 	) {
-		const utils = new LiqPayUtilsClient(
-			publicKey,
-			privateKey,
-			resultUrl,
-			serverUrl,
-		)
-		this.payments = new LiqPayPaymentsClient(utils)
-		this.webhooks = new LiqPayWebhooksClient(utils)
+		const utils = new UtilsClient(publicKey, privateKey, resultUrl, serverUrl)
+		this.payments = new PaymentsClient(utils)
+		this.webhooks = new WebhooksClient(utils)
 	}
 }

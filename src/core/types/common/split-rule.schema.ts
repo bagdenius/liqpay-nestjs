@@ -1,14 +1,14 @@
 import { z } from 'zod'
 
-import { LiqPayCommisionPayerSchema } from './enums'
-import { LiqPayFiscalDataSchema } from './fiscal-data.schema'
+import { CommisionPayerSchema } from './enums'
+import { FiscalDataSchema } from './fiscal-data.schema'
 
-export const LiqPaySplitRuleSchema = z.object({
+export const SplitRuleSchema = z.object({
 	public_key: z.string(),
 	amount: z.number(),
-	commission_payer: LiqPayCommisionPayerSchema,
+	commission_payer: CommisionPayerSchema,
 	server_url: z.string(),
-	rro_info: LiqPayFiscalDataSchema.optional(),
+	rro_info: FiscalDataSchema.optional(),
 })
 
-export type LiqPaySplitRule = z.infer<typeof LiqPaySplitRuleSchema>
+export type SplitRule = z.infer<typeof SplitRuleSchema>

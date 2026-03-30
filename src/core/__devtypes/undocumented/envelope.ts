@@ -1,4 +1,4 @@
-export interface LiqPayEnvelope {
+export interface Envelope {
 	data: string
 	signature: string
 }

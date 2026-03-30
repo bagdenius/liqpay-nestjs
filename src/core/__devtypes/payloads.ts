@@ -1,9 +1,9 @@
-export interface LiqPayEnvelope {
+export interface Envelope {
 	data: string
 	signature: string
 }
 
-export interface LiqPayCheckoutRequestPayload {
+export interface CheckoutRequestPayload {
 	version: number
 	public_key: string
 	action: string
@@ -39,7 +39,7 @@ export interface LiqPayCheckoutRequestPayload {
 	product_url?: string
 }
 
-export interface LiqPayCheckoutCallbackPayload {
+export interface CheckoutCallbackPayload {
 	acq_id: number
 	action: string
 	agent_commission: number
@@ -65,7 +65,7 @@ export interface LiqPayCheckoutCallbackPayload {
 	info: string
 	ip: string
 	is_3ds: boolean
-	liqpay_order_id: string
+	_order_id: string
 	mpi_eci: number
 	order_id: string
 	payment_id: number
@@ -100,14 +100,14 @@ export interface LiqPayCheckoutCallbackPayload {
 	verifycode?: string
 }
 
-export interface LiqPayPaymentStatusRequestPayload {
+export interface PaymentStatusRequestPayload {
 	version: number
 	public_key: string
 	action: string
 	order_id: string
 }
 
-export interface LiqPayPaymentStatusResponsePayload {
+export interface PaymentStatusResponsePayload {
 	version: number
 	public_key: string
 	action: string
@@ -135,7 +135,7 @@ export interface LiqPayPaymentStatusResponsePayload {
 	ip: string
 	is_3ds: boolean
 	language: string
-	liqpay_order_id: string
+	_order_id: string
 	moment_part: string
 	mpi_eci: number
 	order_id: string

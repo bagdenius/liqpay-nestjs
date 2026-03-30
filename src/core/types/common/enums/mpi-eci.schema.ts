@@ -1,4 +1,4 @@
 import { z } from 'zod'
 
-export const LiqPayMpiEciSchema = z.enum(['5', '6', '7'])
-export type LiqPayMpiEci = z.infer<typeof LiqPayMpiEciSchema>
+export const MpiEciSchema = z.enum(['5', '6', '7'])
+export type MpiEci = z.infer<typeof MpiEciSchema>

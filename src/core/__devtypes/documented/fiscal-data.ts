@@ -1,13 +1,13 @@
-import { LiqPayFiscalTax, LiqPayUnit } from './types'
+import { FiscalTax, Unit } from './types'
 
 /**
  * Fiscalization data provided by ID contract
  */
-export interface LiqPayFiscalData {
+export interface FiscalData {
 	/**
 	 * Data about the goods for which payment is made
 	 */
-	items?: LiqPayFiscalProductById[] | LiqPayFiscalProductByApi[]
+	items?: FiscalProductById[] | FiscalProductByApi[]
 
 	/**
 	 * List of e-mails to which receipts should be sent after fiscalization
@@ -18,7 +18,7 @@ export interface LiqPayFiscalData {
 /**
  * Contract of data about the product for which payment is being made provided by ID
  */
-export interface LiqPayFiscalProductById {
+export interface FiscalProductById {
 	/**
 	 * Quantity/volume
 	 */
@@ -43,7 +43,7 @@ export interface LiqPayFiscalProductById {
 /**
  * Contract of data about the product for which payment is being made provided by API
  */
-export interface LiqPayFiscalProductByApi {
+export interface FiscalProductByApi {
 	/**
 	 * Quantity/volume
 	 */
@@ -72,7 +72,7 @@ export interface LiqPayFiscalProductByApi {
 	/**
 	 * Unit of measure code
 	 */
-	unitcode: LiqPayUnit
+	unitcode: Unit
 
 	/**
 	 * Digital value of the product barcode
@@ -92,5 +92,5 @@ export interface LiqPayFiscalProductByApi {
 	/**
 	 * Tax rate for the product
 	 */
-	taxs?: LiqPayFiscalTax[]
+	taxs?: FiscalTax[]
 }

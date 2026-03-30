@@ -1,7 +1,7 @@
 /**
  * Contract of data that is passed when forming a request to receive payment status as data in `base64` encoded string form when calling the LiqPay API
  */
-export interface LiqPayPaymentStatusRequest {
+export interface PaymentStatusRequest {
 	/**
 	 * API version. Current version: `7`
 	 */

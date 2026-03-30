@@ -1,15 +1,9 @@
-import {
-	LiqPayAction,
-	LiqPayCurrency,
-	LiqPayMpiEci,
-	LiqPayPaymentStatus,
-	LiqPayPaytype,
-} from './types'
+import { Action, Currency, MpiEci, PaymentStatus, Paytype } from './types'
 
 /**
  * Contract of decoded format of API parameters received in a request from LiqPay after payment
  */
-export interface LiqPayCheckoutCallback {
+export interface CheckoutCallback {
 	/**
 	 * Acquirer ID
 	 */
@@ -22,7 +16,7 @@ export interface LiqPayCheckoutCallback {
 	 * - `subscribe` - creation of a regular payment
 	 * - `regular` - regular payment
 	 */
-	action: LiqPayAction
+	action: Action
 
 	/**
 	 * Agent commission in payment currency
@@ -87,17 +81,17 @@ export interface LiqPayCheckoutCallback {
 	/**
 	 * Payment currency
 	 */
-	currency: LiqPayCurrency
+	currency: Currency
 
 	/**
 	 * Transaction currency credit
 	 */
-	currency_credit: LiqPayCurrency
+	currency_credit: Currency
 
 	/**
 	 * Transaction currency debit
 	 */
-	currency_debit: LiqPayCurrency
+	currency_debit: Currency
 
 	/**
 	 * A unique user identifier on the merchant's website. Maximum length __100__ characters.
@@ -142,7 +136,7 @@ export interface LiqPayCheckoutCallback {
 	/**
 	 * `Order_id` of payment in the LiqPay system
 	 */
-	liqpay_order_id: string
+	_order_id: string
 
 	/**
 	 * Code that represents whether 3D-Secure verification was performed during payment. Possible values:
@@ -150,7 +144,7 @@ export interface LiqPayCheckoutCallback {
 	 * - `6` - the payer's card issuer does not support 3D-Secure technology
 	 * - `7` - the transaction was completed without 3D-Secure
 	 */
-	mpi_eci: LiqPayMpiEci
+	mpi_eci: MpiEci
 
 	/**
 	 * Payment `Order_id`
@@ -170,7 +164,7 @@ export interface LiqPayCheckoutCallback {
 	 * - invoice - invoice to e-mail
 	 * - qr - scan qr code
 	 */
-	paytype: LiqPayPaytype
+	paytype: Paytype
 
 	/**
 	 * Store public key
@@ -255,7 +249,7 @@ export interface LiqPayCheckoutCallback {
 	/**
 	 * Payment status
 	 */
-	status: LiqPayPaymentStatus
+	status: PaymentStatus
 
 	/**
 	 * An additional payment status indicating that the current payment is reserved for a refund on your store. Possible values: `true` - the payment is reserved for a refund

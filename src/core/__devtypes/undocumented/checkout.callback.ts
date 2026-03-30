@@ -1,14 +1,8 @@
-import {
-	LiqPayAction,
-	LiqPayCurrency,
-	LiqPayMpiEci,
-	LiqPayPaymentStatus,
-	LiqPayPaytype,
-} from './types'
+import { Action, Currency, MpiEci, PaymentStatus, Paytype } from './types'
 
-export interface LiqPayCheckoutCallback {
+export interface CheckoutCallback {
 	acq_id: number
-	action: LiqPayAction
+	action: Action
 	agent_commission: number
 	amount: number
 	amount_bonus: number
@@ -21,9 +15,9 @@ export interface LiqPayCheckoutCallback {
 	commission_debit: number
 	completion_date: Date
 	create_date: Date
-	currency: LiqPayCurrency
-	currency_credit: LiqPayCurrency
-	currency_debit: LiqPayCurrency
+	currency: Currency
+	currency_credit: Currency
+	currency_debit: Currency
 	customer: string
 	description: string
 	end_date: Date
@@ -32,11 +26,11 @@ export interface LiqPayCheckoutCallback {
 	info: string
 	ip: string
 	is_3ds: boolean
-	liqpay_order_id: string
-	mpi_eci: LiqPayMpiEci
+	_order_id: string
+	mpi_eci: MpiEci
 	order_id: string
 	payment_id: number
-	paytype: LiqPayPaytype
+	paytype: Paytype
 	public_key: string
 	receiver_commission: number
 	redirect_to: string
@@ -53,7 +47,7 @@ export interface LiqPayCheckoutCallback {
 	sender_first_name: string
 	sender_last_name: string
 	sender_phone: string
-	status: LiqPayPaymentStatus
+	status: PaymentStatus
 	wait_reserve_status?: boolean
 	token: string
 	type: string

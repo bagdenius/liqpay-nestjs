@@ -1,4 +1,4 @@
-export interface LiqPayDetailAddenda {
+export interface DetailAddenda {
 	airLine: string
 	ticketNumber: string
 	passengerName: string

@@ -1,11 +1,11 @@
-import { LiqPayFiscalData } from '../../types/common'
+import { FiscalData } from '../../types/common'
 
-import { LiqPayCommisionPayer } from './types'
+import { CommisionPayer } from './types'
 
-export interface LiqPaySplitRule {
+export interface SplitRule {
 	public_key: string
 	amount: number
-	commission_payer: LiqPayCommisionPayer
+	commission_payer: CommisionPayer
 	server_url: string
-	rro_info?: LiqPayFiscalData
+	rro_info?: FiscalData
 }

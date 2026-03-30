@@ -1,15 +1,15 @@
 import { LiqPayClient } from '../../core/clients'
-import { LiqPayCheckoutRequest } from '../../core/types/checkout'
+import { CheckoutRequest } from '../../core/types/checkout'
 
-export class LiqPayPaymentsService {
+export class PaymentsService {
 	public constructor(private readonly client: LiqPayClient) {}
 
-	public getCheckoutUrl(payload: LiqPayCheckoutRequest): string {
+	public getCheckoutUrl(payload: CheckoutRequest): string {
 		return this.client.payments.getCheckoutUrl(payload)
 	}
 
 	public getCheckoutForm(
-		payload: LiqPayCheckoutRequest,
+		payload: CheckoutRequest,
 		buttonText?: string,
 		buttonColor?: string,
 	): string {
@@ -20,7 +20,7 @@ export class LiqPayPaymentsService {
 		)
 	}
 
-	public create(payload: LiqPayCheckoutRequest) {
+	public create(payload: CheckoutRequest) {
 		return this.client.payments.create(payload)
 	}
 

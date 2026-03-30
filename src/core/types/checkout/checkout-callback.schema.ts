@@ -9,17 +9,17 @@ import {
 	removeUndefined,
 } from '../../utils'
 import {
-	LiqPayActionSchema,
-	LiqPayCurrencySchema,
-	LiqPayMpiEciSchema,
-	LiqPayPaymentStatusSchema,
-	LiqPayPaytypeSchema,
+	ActionSchema,
+	CurrencySchema,
 	LiqPayVersionSchema,
+	MpiEciSchema,
+	PaymentStatusSchema,
+	PaytypeSchema,
 } from '../common/enums'
 import { LiqPayErrorCodeSchema } from '../error'
 
 // TODO: check for optional fields on real api callbacks
-export const LiqPayRawCheckoutCallbackSchema = z.object({
+export const RawCheckoutCallbackSchema = z.object({
 	version: z.number().optional(),
 	public_key: z.string().optional(),
 	acq_id: z.number().optional(),
@@ -47,7 +47,7 @@ export const LiqPayRawCheckoutCallbackSchema = z.object({
 	info: z.string().optional(),
 	ip: z.string().optional(),
 	is_3ds: z.union([z.string(), z.boolean()]).optional(),
-	liqpay_order_id: z.string().optional(),
+	_order_id: z.string().optional(),
 	mpi_eci: z.union([z.number(), z.string()]).optional(),
 	order_id: z.string().optional(),
 	payment_id: z.number().optional(),
@@ -79,41 +79,32 @@ export const LiqPayRawCheckoutCallbackSchema = z.object({
 	refund_amount: z.number().optional(),
 	verifycode: z.string().optional(),
 })
-export type LiqPayRawCheckoutCallback = z.infer<
-	typeof LiqPayRawCheckoutCallbackSchema
->
+export type RawCheckoutCallback = z.infer<typeof RawCheckoutCallbackSchema>
 
-export const LiqPayCheckoutCallbackSchema =
-	LiqPayRawCheckoutCallbackSchema.transform(raw => {
+export const CheckoutCallbackSchema = RawCheckoutCallbackSchema.transform(
+	raw => {
 		const camelized = objectToCamel(raw)
 		const transformed = {
 			...camelized,
 			version: parseOptional(LiqPayVersionSchema, camelized.version),
 			acqId: parseString(camelized.acqId),
-			action: parseOptional(LiqPayActionSchema, camelized.action),
+			action: parseOptional(ActionSchema, camelized.action),
 			completionDate: parseDate(camelized.completionDate),
 			createDate: parseDate(camelized.createDate),
-			currency: parseOptional(LiqPayCurrencySchema, camelized.currency),
-			currencyCredit: parseOptional(
-				LiqPayCurrencySchema,
-				camelized.currencyCredit,
-			),
-			currencyDebit: parseOptional(
-				LiqPayCurrencySchema,
-				camelized.currencyDebit,
-			),
+			currency: parseOptional(CurrencySchema, camelized.currency),
+			currencyCredit: parseOptional(CurrencySchema, camelized.currencyCredit),
+			currencyDebit: parseOptional(CurrencySchema, camelized.currencyDebit),
 			endDate: parseDate(camelized.endDate),
 			errCode: parseOptional(LiqPayErrorCodeSchema, camelized.errCode),
 			is3ds: parseBoolean(camelized.is3ds),
-			mpiEci: parseOptional(LiqPayMpiEciSchema, String(camelized.mpiEci)),
+			mpiEci: parseOptional(MpiEciSchema, String(camelized.mpiEci)),
 			paymentId: parseString(camelized.paymentId),
-			paytype: parseOptional(LiqPayPaytypeSchema, camelized.paytype),
+			paytype: parseOptional(PaytypeSchema, camelized.paytype),
 			refundDateLast: parseDate(camelized.refundDateLast),
-			status: parseOptional(LiqPayPaymentStatusSchema, camelized.status),
+			status: parseOptional(PaymentStatusSchema, camelized.status),
 			waitReserveStatus: parseBoolean(camelized.waitReserveStatus),
 		}
 		return removeUndefined(transformed)
-	})
-export type LiqPayCheckoutCallback = z.infer<
-	typeof LiqPayCheckoutCallbackSchema
->
+	},
+)
+export type CheckoutCallback = z.infer<typeof CheckoutCallbackSchema>

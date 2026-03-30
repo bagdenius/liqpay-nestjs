@@ -1,19 +1,17 @@
-import { LiqPayCheckoutCallback, LiqPayRawCheckoutCallback } from '../checkout'
+import { CheckoutCallback, RawCheckoutCallback } from '../checkout'
 import { LiqPayErrorResponse } from '../error'
 import {
-	LiqPayPaymentStatusResponse,
-	LiqPayRawPaymentStatusResponse,
+	PaymentStatusResponse,
+	RawPaymentStatusResponse,
 } from '../payment-status'
 
-export type LiqPayResponse =
-	| LiqPayCheckoutCallback
-	| LiqPayPaymentStatusResponse
+export type LiqPayResponse = CheckoutCallback | PaymentStatusResponse
 
 export type LiqPayRawResponse =
-	| LiqPayRawCheckoutCallback
-	| LiqPayRawPaymentStatusResponse
+	| RawCheckoutCallback
+	| RawPaymentStatusResponse
 	| LiqPayErrorResponse
 
-export type LiqPayCallResult<T> =
+export type Result<T> =
 	| { data: T; error?: null }
 	| { data: null; error: { code: string; description: string } }
