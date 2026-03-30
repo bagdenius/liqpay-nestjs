@@ -106,7 +106,7 @@ export const LiqPayCheckoutCallbackSchema =
 			errCode: parseOptional(LiqPayErrorCodeSchema, camelized.errCode),
 			is3ds: parseBoolean(camelized.is3ds),
 			mpiEci: parseOptional(LiqPayMpiEciSchema, String(camelized.mpiEci)),
-			orderId: parseString(camelized.orderId),
+			paymentId: parseString(camelized.paymentId),
 			paytype: parseOptional(LiqPayPaytypeSchema, camelized.paytype),
 			refundDateLast: parseDate(camelized.refundDateLast),
 			status: parseOptional(LiqPayPaymentStatusSchema, camelized.status),
