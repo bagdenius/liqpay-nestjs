@@ -1,8 +1,10 @@
 import { Result } from '../types/base'
 import {
+	CheckoutInput,
 	type CheckoutRequest,
 	RawCheckoutRequestSchema,
 } from '../types/checkout'
+import { Action } from '../types/common/enums'
 import {
 	PaymentStatusResponse,
 	PaymentStatusResponseSchema,
@@ -15,40 +17,45 @@ import { UtilsClient } from './utils.client'
 export class PaymentsClient {
 	constructor(private readonly utils: UtilsClient) {}
 
-	private fulfillPayload(payload: CheckoutRequest): CheckoutRequest {
-		return {
+	private prepare(payload: CheckoutInput, action: Action) {
+		const fullfilled: CheckoutRequest = {
 			...payload,
+			action,
 			version: 7,
+			publicKey: this.utils.publicKey,
 			resultUrl: payload.resultUrl ?? this.utils.resultUrl,
 			serverUrl: payload.serverUrl ?? this.utils.serverUrl,
 		}
-	}
-
-	private prepareCheckout(payload: CheckoutRequest) {
-		const fullfilled = this.fulfillPayload(payload)
 		const raw = RawCheckoutRequestSchema.parse(fullfilled)
-		const { data, signature } = this.utils.getCredentials(raw)
+		const { data, signature } = this.utils.toEnvelope(raw)
 		return { fullfilled, data, signature }
 	}
 
-	public getCheckoutUrl(payload: CheckoutRequest): string {
-		const { data, signature } = this.prepareCheckout(payload)
+	private buildUrl(data: string, signature: string): string {
 		return `${CHECKOUT_URL}?data=${data}&signature=${signature}`
 	}
 
-	public create(
-		payload: CheckoutRequest,
-	): CheckoutRequest & { checkoutUrl: string } {
-		const fullfilled = this.fulfillPayload(payload)
-		return { ...fullfilled, checkoutUrl: this.getCheckoutUrl(fullfilled) }
+	public pay(payload: CheckoutInput): CheckoutRequest & { url: string } {
+		const { fullfilled, data, signature } = this.prepare(payload, 'pay')
+		return { ...fullfilled, url: this.buildUrl(data, signature) }
 	}
 
-	public getCheckoutFormButton(
-		payload: CheckoutRequest,
+	public hold(payload: CheckoutInput): CheckoutRequest & { url: string } {
+		const { fullfilled, data, signature } = this.prepare(payload, 'hold')
+		return { ...fullfilled, url: this.buildUrl(data, signature) }
+	}
+
+	public subscribe(payload: CheckoutInput): CheckoutRequest & { url: string } {
+		const { fullfilled, data, signature } = this.prepare(payload, 'subscribe')
+		return { ...fullfilled, url: this.buildUrl(data, signature) }
+	}
+
+	public getPayButton(
+		payload: CheckoutInput,
 		buttonText: string = 'Pay',
 		buttonColor: string = '#77CC5D',
 	): string {
-		const { data, signature } = this.prepareCheckout(payload)
+		const { data, signature } = this.prepare(payload, 'pay')
 		return `
       <form method="POST" action="${CHECKOUT_URL}" accept-charset="utf-8">
         <input type="hidden" name="data" value="${data}" />

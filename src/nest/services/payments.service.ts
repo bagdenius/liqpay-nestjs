@@ -1,27 +1,27 @@
 import { LiqPayClient } from '../../core/clients'
-import { CheckoutRequest } from '../../core/types/checkout'
+import { CheckoutInput } from '../../core/types/checkout'
 
 export class PaymentsService {
 	public constructor(private readonly client: LiqPayClient) {}
 
-	public getCheckoutUrl(payload: CheckoutRequest): string {
-		return this.client.payments.getCheckoutUrl(payload)
+	public pay(payload: CheckoutInput) {
+		return this.client.payments.pay(payload)
 	}
 
-	public getCheckoutForm(
-		payload: CheckoutRequest,
+	public hold(payload: CheckoutInput) {
+		return this.client.payments.hold(payload)
+	}
+
+	public subscribe(payload: CheckoutInput) {
+		return this.client.payments.subscribe(payload)
+	}
+
+	public getPayButton(
+		payload: CheckoutInput,
 		buttonText?: string,
 		buttonColor?: string,
 	): string {
-		return this.client.payments.getCheckoutFormButton(
-			payload,
-			buttonText,
-			buttonColor,
-		)
-	}
-
-	public create(payload: CheckoutRequest) {
-		return this.client.payments.create(payload)
+		return this.client.payments.getPayButton(payload, buttonText, buttonColor)
 	}
 
 	public async getPaymentStatus(orderId: string) {

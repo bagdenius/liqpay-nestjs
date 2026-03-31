@@ -31,13 +31,8 @@ export class UtilsClient {
 		return createHash('sha3-256').update(signatureString).digest('base64')
 	}
 
-	public getCredentials(data: LiqPayRawRequest): LiqPayEnvelope {
-		const payload: LiqPayRawRequest = {
-			...data,
-			version: 7,
-			public_key: this.publicKey,
-		}
-		const encoded = this.encodeData(payload)
+	public toEnvelope(data: LiqPayRawRequest): LiqPayEnvelope {
+		const encoded = this.encodeData(data)
 		const signature = this.createSignature(encoded)
 		return { data: encoded, signature }
 	}
@@ -101,7 +96,7 @@ export class UtilsClient {
 		url: string,
 	): Promise<Result<TResponse>> {
 		const raw = rawSchema.parse(payload)
-		const envelope = this.getCredentials(raw)
+		const envelope = this.toEnvelope(raw)
 		const response = await fetch(url, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

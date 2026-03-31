@@ -15,13 +15,7 @@ export class LiqpayService {
 		@Inject(LIQPAY_OPTIONS)
 		private readonly options: LiqPayOptions,
 	) {
-		const { privateKey, publicKey, resultUrl, serverUrl } = options
-		const client = new LiqPayClient(
-			publicKey,
-			privateKey,
-			resultUrl ?? '',
-			serverUrl ?? '',
-		)
+		const client = new LiqPayClient(options)
 		this.payments = new PaymentsService(client)
 		this.webhooks = new WebhooksService(client)
 	}
