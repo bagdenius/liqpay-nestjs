@@ -21,7 +21,13 @@ import { LiqPayErrorCodeSchema } from '../error'
 // TODO: check for optional fields on real api callbacks
 
 /**
- * Contract of decoded format of API parameters received in a request from LiqPay after payment
+ * Raw (non-normalized) LiqPay checkout callback payload.
+ *
+ * ⚠️ Notes:
+ * - All fields are in snake_case
+ * - Types are inconsistent (string | number | boolean)
+ * - Some fields may be missing depending on payment flow
+ * - Should NOT be used directly in application logic
  */
 export const RawCheckoutCallbackSchema = z.object({
 	/**
@@ -326,10 +332,22 @@ export const RawCheckoutCallbackSchema = z.object({
 	 */
 	verifycode: z.string().optional(),
 })
+
+/**
+ * Type of raw LiqPay callback.
+ */
 export type RawCheckoutCallback = z.infer<typeof RawCheckoutCallbackSchema>
 
 /**
- * Contract of decoded format of API parameters received in a request from LiqPay after payment
+ * Normalized checkout callback.
+ *
+ * What this schema does:
+ * - Converts keys from snake_case → camelCase
+ * - Normalizes types (string → number/date/boolean)
+ * - Validates enums
+ * - Removes undefined fields
+ *
+ * Safe to use in business logic.
  */
 export const CheckoutCallbackSchema = RawCheckoutCallbackSchema.transform(
 	raw => {
@@ -465,6 +483,9 @@ export const CheckoutCallbackSchema = RawCheckoutCallbackSchema.transform(
 )
 
 /**
- * Contract of decoded format of API parameters received in a request from LiqPay after payment
+ * Type of normalized checkout callback.
+ * - Fully parsed
+ * - Type-safe
+ * - Ready for backend logic
  */
 export type CheckoutCallback = z.infer<typeof CheckoutCallbackSchema>

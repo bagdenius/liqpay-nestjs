@@ -24,7 +24,7 @@ import {
 } from '../common/enums'
 
 /**
- * Contract of data that is passed when forming a payment request as `base64` encoded string data when calling the LiqPay API
+ * Input data for checkout (payment creation). This is the main payload provided by the user.
  */
 export const CheckoutInputSchema = z.object({
 	/**
@@ -195,12 +195,14 @@ export const CheckoutInputSchema = z.object({
 })
 
 /**
- * Contract of data that is passed when forming a payment request as `base64` encoded string data when calling the LiqPay API
+ * Type of checkout input.
  */
 export type CheckoutInput = z.infer<typeof CheckoutInputSchema>
 
 /**
- * Contract of data that is passed when forming a payment request as `base64` encoded string data when calling the LiqPay API
+ * Full checkout request (before serialization).
+ *
+ * Extends {@link CheckoutInput} with required LiqPay API fields.
  */
 export type CheckoutRequest = CheckoutInput & {
 	/**
@@ -225,11 +227,21 @@ export type CheckoutRequest = CheckoutInput & {
 	action: CheckoutAction
 }
 
+/**
+ * Raw checkout request (snake_case).
+ *
+ * ⚠️ Notes:
+ * - Converts camelCase → snake_case
+ * - Applies LiqPay-specific formatting
+ * - Removes undefined fields
+ *
+ * Used right before sending request to LiqPay.
+ */
 export const RawCheckoutRequestSchema = z
 	.custom<CheckoutRequest>()
-	.transform(req => {
+	.transform(request => {
 		const { fiscalData, verifyCode, recurringByToken, detailAddenda, ...rest } =
-			req
+			request
 		const snakelized = objectToSnake(rest)
 		const transformed = {
 			...snakelized,
@@ -295,4 +307,11 @@ export const RawCheckoutRequestSchema = z
 		}
 		return removeUndefined(transformed)
 	})
+
+/**
+ * Type of raw checkout request.
+ * - snake_case
+ * - formatted for LiqPay
+ * - ready to be encoded (base64 + signature)
+ */
 export type RawCheckoutRequest = z.infer<typeof RawCheckoutRequestSchema>

@@ -23,7 +23,14 @@ import {
 // TODO: check for optional fields on real api responses
 
 /**
- * Schema of data that comes in response to a request to get payment status
+ * Raw response from LiqPay `status` API.
+ *
+ * ⚠️ Important:
+ * - Field names are in `snake_case`
+ * - Types are inconsistent (`string | number | boolean`)
+ * - Dates are not parsed
+ *
+ * This schema reflects the API response **as-is**, without normalization.
  */
 export const RawPaymentStatusResponseSchema = z.object({
 	/**
@@ -298,14 +305,21 @@ export const RawPaymentStatusResponseSchema = z.object({
 })
 
 /**
- * Contract of data that comes in response to a request to get payment status
+ * Raw (unprocessed) payment status response.
  */
 export type RawPaymentStatusResponse = z.infer<
 	typeof RawPaymentStatusResponseSchema
 >
 
 /**
- * Schema of data that comes in response to a request to get payment status
+ * Normalized payment status response.
+ *
+ * This schema:
+ * - converts keys to `camelCase`
+ * - normalizes primitive types
+ * - parses dates
+ * - validates enums
+ * - removes `undefined` fields
  */
 export const PaymentStatusResponseSchema =
 	RawPaymentStatusResponseSchema.transform(raw => {
@@ -437,6 +451,8 @@ export const PaymentStatusResponseSchema =
 	})
 
 /**
- * Contract of data that comes in response to a request to get payment status
+ * Final, fully normalized payment status response.
+ *
+ * Use this type in application code instead of raw API response.
  */
 export type PaymentStatusResponse = z.infer<typeof PaymentStatusResponseSchema>

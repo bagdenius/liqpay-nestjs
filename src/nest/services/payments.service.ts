@@ -5,7 +5,7 @@ import { PaymentStatusInput } from '../../core/types/payment-status'
 export class PaymentsService {
 	public constructor(private readonly client: LiqPayClient) {}
 
-	public pay(payload: CheckoutInput) {
+	public getCheckoutUrl(payload: CheckoutInput) {
 		return this.client.payments.getCheckoutUrl(payload)
 	}
 
@@ -17,7 +17,7 @@ export class PaymentsService {
 		return this.client.payments.subscribe(payload)
 	}
 
-	public getPayButton(
+	public getCheckoutButton(
 		payload: CheckoutInput,
 		buttonText?: string,
 		buttonColor?: string,

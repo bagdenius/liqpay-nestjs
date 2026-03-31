@@ -1,10 +1,10 @@
 import { objectToSnake } from 'ts-case-convert'
 import z from 'zod'
 
-import { Action, LiqPayVersion } from '../common/enums'
+import { LiqPayVersion, PaymentStatusAction } from '../common/enums'
 
 /**
- * Schema of data that is passed when forming a request to receive payment status as data in `base64` encoded string form when calling the LiqPay API
+ * Input data for retrieving payment status. Minimal payload required from the user.
  */
 export const PaymentStatusInputSchema = z.object({
 	/**
@@ -14,12 +14,14 @@ export const PaymentStatusInputSchema = z.object({
 })
 
 /**
- * Contract of data that is passed when forming a request to receive payment status as data in `base64` encoded string form when calling the LiqPay API
+ * Type of payment status input.
  */
 export type PaymentStatusInput = z.infer<typeof PaymentStatusInputSchema>
 
 /**
- * Schema of data that is passed when forming a request to receive payment status as data in `base64` encoded string form when calling the LiqPay API
+ * Full payment status request (before serialization).
+ *
+ * Extends {@link PaymentStatusInput} with required LiqPay API fields.
  */
 export type PaymentStatusRequest = PaymentStatusInput & {
 	/**
@@ -37,16 +39,31 @@ export type PaymentStatusRequest = PaymentStatusInput & {
 	/**
 	 * Operation type. Possible values: `status`
 	 */
-	action: Extract<Action, 'status'>
+	action: PaymentStatusAction
 }
 
+/**
+ * Raw payment status request (snake_case).
+ *
+ * ⚠️ Notes:
+ * - Converts camelCase → snake_case
+ * - Does NOT modify values
+ * - Does NOT perform validation
+ *
+ * Used before sending request to LiqPay API.
+ */
 export const RawPaymentStatusRequestSchema = z
 	.custom<PaymentStatusRequest>()
-	.transform(typed => {
-		const snakelized = objectToSnake(typed)
+	.transform(request => {
+		const snakelized = objectToSnake(request)
 		return { ...snakelized }
 	})
 
+/**
+ * Type of raw payment status request.
+ * - snake_case
+ * - ready for encoding and sending to LiqPay
+ */
 export type RawPaymentStatusRequest = z.infer<
 	typeof RawPaymentStatusRequestSchema
 >

@@ -145,6 +145,10 @@ export type CheckoutAction = Extract<
 	'pay' | 'hold' | 'subscribe' | 'paydonate'
 >
 
+export type PaymentStatusAction = Extract<Action, 'status'>
+
+export type RefundAction = Extract<Action, 'refund'>
+
 export type VerificationAction = Extract<
 	Action,
 	'confirm' | 'mpi' | 'cardverification'
