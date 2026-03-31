@@ -35,19 +35,38 @@ export class PaymentsClient {
 		return `${CHECKOUT_URL}?data=${data}&signature=${signature}`
 	}
 
-	public pay(payload: CheckoutInput): CheckoutRequest & { url: string } {
+	public pay(payload: CheckoutInput) {
 		const { fullfilled, data, signature } = this.prepare(payload, 'pay')
-		return { ...fullfilled, url: this.buildUrl(data, signature) }
+		return {
+			...fullfilled,
+			url: this.buildUrl(data, signature),
+			data,
+			signature,
+		}
 	}
 
-	public hold(payload: CheckoutInput): CheckoutRequest & { url: string } {
+	// TODO: implement
+	public hold(payload: CheckoutInput) {
 		const { fullfilled, data, signature } = this.prepare(payload, 'hold')
-		return { ...fullfilled, url: this.buildUrl(data, signature) }
+		return {
+			...fullfilled,
+			url: this.buildUrl(data, signature),
+			data,
+			signature,
+		}
 	}
 
-	public subscribe(payload: CheckoutInput): CheckoutRequest & { url: string } {
+	// TODO: implement SubscriptionsClient with related methods
+
+	// TODO: implement
+	public subscribe(payload: CheckoutInput) {
 		const { fullfilled, data, signature } = this.prepare(payload, 'subscribe')
-		return { ...fullfilled, url: this.buildUrl(data, signature) }
+		return {
+			...fullfilled,
+			url: this.buildUrl(data, signature),
+			data,
+			signature,
+		}
 	}
 
 	public getPayButton(
