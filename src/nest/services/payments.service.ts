@@ -5,7 +5,7 @@ export class PaymentsService {
 	public constructor(private readonly client: LiqPayClient) {}
 
 	public pay(payload: CheckoutInput) {
-		return this.client.payments.pay(payload)
+		return this.client.payments.getCheckoutUrl(payload)
 	}
 
 	public hold(payload: CheckoutInput) {
@@ -24,7 +24,7 @@ export class PaymentsService {
 		return this.client.payments.getPayButton(payload, buttonText, buttonColor)
 	}
 
-	public async getPaymentStatus(orderId: string) {
+	public async getStatus(orderId: string) {
 		return this.client.payments.getStatus(orderId)
 	}
 }

@@ -35,7 +35,17 @@ export class PaymentsClient {
 		return `${CHECKOUT_URL}?data=${data}&signature=${signature}`
 	}
 
-	public pay(payload: CheckoutInput) {
+	private checkout(payload: CheckoutInput, action: Action) {
+		const { fullfilled, data, signature } = this.prepare(payload, action)
+		return {
+			...fullfilled,
+			url: this.buildUrl(data, signature),
+			data,
+			signature,
+		}
+	}
+
+	public getCheckoutUrl(payload: CheckoutInput) {
 		const { fullfilled, data, signature } = this.prepare(payload, 'pay')
 		return {
 			...fullfilled,
