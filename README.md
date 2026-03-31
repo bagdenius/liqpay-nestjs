@@ -1,15 +1,15 @@
 # liqpay-nestjs
 
-NestJS module for LiqPay payments with typed request builders, signed checkout payload generation, webhook callback parsing, and payment status lookups.
+NestJS module for LiqPay payments with typed request models, signed checkout payload generation, webhook callback parsing, and payment status lookups.
 
 ## Features
 
 - NestJS module with `forRoot` and `forRootAsync`
 - `LiqpayService` with `payments` and `webhooks` helpers
-- Signed builders for `pay`, `hold`, and `subscribe` checkout flows
-- HTML pay button generation with LiqPay SDK markup
-- Zod schemas and TypeScript types exported from the package root
-- Callback signature verification and camelCase response parsing
+- Signed checkout builders for standard payment, hold, and subscription flows
+- HTML checkout button generation with LiqPay SDK markup
+- Typed payment status requests and normalized responses
+- TypeScript types exported from the package root
 
 ## Requirements
 
@@ -71,11 +71,16 @@ import { LiqPayModule } from 'liqpay-nestjs'
 export class AppModule {}
 ```
 
-### Use `LiqpayService`
+### Inject and use `LiqpayService`
 
 ```ts
-import { Body, Controller, Get, Param, Post } from '@nestjs/common'
-import { CheckoutInput, LiqPayEnvelope, LiqpayService } from 'liqpay-nestjs'
+import { Body, Controller, Get, Post, Query } from '@nestjs/common'
+import { LiqpayService } from 'liqpay-nestjs'
+import type {
+	CheckoutInput,
+	LiqPayEnvelope,
+	PaymentStatusInput,
+} from 'liqpay-nestjs'
 
 @Controller('payments')
 export class PaymentsController {
@@ -90,7 +95,7 @@ export class PaymentsController {
 			orderId: 'order-123',
 		}
 
-		const checkout = this.liqpay.payments.pay(payload)
+		const checkout = this.liqpay.payments.getCheckoutUrl(payload)
 
 		return {
 			url: checkout.url,
@@ -99,9 +104,10 @@ export class PaymentsController {
 		}
 	}
 
-	@Get(':orderId/status')
-	getStatus(@Param('orderId') orderId: string) {
-		return this.liqpay.payments.getPaymentStatus(orderId)
+	@Get('status')
+	getStatus(@Query('orderId') orderId: string) {
+		const payload: PaymentStatusInput = { orderId }
+		return this.liqpay.payments.getStatus(payload)
 	}
 
 	@Post('webhook')
@@ -113,12 +119,12 @@ export class PaymentsController {
 
 ## Typical Flow
 
-1. Register `LiqPayModule` with your keys and optional default callback URLs.
-2. Build a checkout payload with `liqpay.payments.pay(...)`, `hold(...)`, or `subscribe(...)`.
-3. Redirect the user to the returned `url`, or render your own form using `data` and `signature`.
+1. Register `LiqPayModule` with your public and private keys.
+2. Build a checkout payload with `liqpay.payments.getCheckoutUrl(...)`, `hold(...)`, or `subscribe(...)`.
+3. Redirect the customer to `result.url` or render the returned button HTML.
 4. Receive the LiqPay callback envelope at your `serverUrl` endpoint.
 5. Parse the callback with `liqpay.webhooks.parseCheckoutCallback(...)`.
-6. Confirm the final state later with `liqpay.payments.getPaymentStatus(orderId)` if needed.
+6. Query the current state later with `liqpay.payments.getStatus({ orderId })` when needed.
 
 ## Configuration
 
@@ -138,20 +144,20 @@ The async registration provider validates the resolved options and throws if `pu
 
 `LiqpayService.payments` exposes five methods.
 
-| Method                                             | Purpose                                                  | Return type                                                          |
-| -------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------- |
-| `pay(payload)`                                     | Builds a signed checkout payload for a standard payment. | `CheckoutRequest & { url: string; data: string; signature: string }` |
-| `hold(payload)`                                    | Builds a signed checkout payload for a hold operation.   | `CheckoutRequest & { url: string; data: string; signature: string }` |
-| `subscribe(payload)`                               | Builds a signed checkout payload for recurring payments. | `CheckoutRequest & { url: string; data: string; signature: string }` |
-| `getPayButton(payload, buttonText?, buttonColor?)` | Returns HTML for a LiqPay pay button.                    | `string`                                                             |
-| `getPaymentStatus(orderId)`                        | Calls the LiqPay status API.                             | `Promise<Result<PaymentStatusResponse>>`                             |
+| Method                                                  | Purpose                                                     | Notes                                           |
+| ------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------- |
+| `getCheckoutUrl(payload)`                               | Builds a signed standard checkout payload.                  | Returns a full result object, not only the URL. |
+| `hold(payload)`                                         | Builds a signed checkout payload with action `hold`.        | Local builder, no HTTP call.                    |
+| `subscribe(payload)`                                    | Builds a signed checkout payload with action `subscribe`.   | Local builder, no HTTP call.                    |
+| `getCheckoutButton(payload, buttonText?, buttonColor?)` | Returns LiqPay checkout HTML for the standard payment flow. | Uses action `pay`.                              |
+| `getStatus(payload)`                                    | Calls LiqPay status API.                                    | Expects `PaymentStatusInput`.                   |
 
-### `payments.pay(payload)`
+### `payments.getCheckoutUrl(payload)`
 
-Use `pay(...)` for a normal payment flow.
+Use this for a normal checkout flow.
 
 ```ts
-import { CheckoutInput } from 'liqpay-nestjs'
+import type { CheckoutInput } from 'liqpay-nestjs'
 
 const payload: CheckoutInput = {
 	amount: 100,
@@ -160,23 +166,23 @@ const payload: CheckoutInput = {
 	orderId: 'order-123',
 }
 
-const checkout = liqpay.payments.pay(payload)
+const checkout = liqpay.payments.getCheckoutUrl(payload)
 
 console.log(checkout.url)
 console.log(checkout.data)
 console.log(checkout.signature)
 ```
 
-Returned fields:
+Despite the method name, the return value is a signed checkout object containing:
 
-- `url`: ready-to-use LiqPay checkout URL
+- `url`: ready-to-use LiqPay redirect URL
 - `data`: Base64-encoded request payload
-- `signature`: request signature generated from your private key
-- all resolved request fields including `action`, `version`, `publicKey`, and inherited `resultUrl` / `serverUrl`
+- `signature`: signature generated from your private key
+- the resolved checkout fields such as `action`, `version`, `publicKey`, and inherited `resultUrl` / `serverUrl`
 
 ### `payments.hold(payload)`
 
-`hold(...)` has the same return shape as `pay(...)`, but the generated request uses action `hold`.
+Builds the same signed result shape as `getCheckoutUrl(...)`, but with action `hold`.
 
 ```ts
 const holdCheckout = liqpay.payments.hold({
@@ -189,7 +195,7 @@ const holdCheckout = liqpay.payments.hold({
 
 ### `payments.subscribe(payload)`
 
-`subscribe(...)` has the same return shape as `pay(...)`, but builds a subscription request. Subscription-related fields still come from your `CheckoutInput`.
+Builds the same signed result shape as `getCheckoutUrl(...)`, but with action `subscribe`.
 
 ```ts
 const subscriptionCheckout = liqpay.payments.subscribe({
@@ -203,12 +209,12 @@ const subscriptionCheckout = liqpay.payments.subscribe({
 })
 ```
 
-### `payments.getPayButton(payload, buttonText?, buttonColor?)`
+### `payments.getCheckoutButton(payload, buttonText?, buttonColor?)`
 
-Returns an HTML string containing a form and LiqPay `sdk-button` markup for the `pay` action.
+Returns an HTML string containing a form and LiqPay `sdk-button` markup for the standard payment flow.
 
 ```ts
-const html = liqpay.payments.getPayButton(
+const html = liqpay.payments.getCheckoutButton(
 	{
 		amount: 100,
 		currency: 'UAH',
@@ -225,12 +231,15 @@ Defaults:
 - `buttonText`: `Pay`
 - `buttonColor`: `#77CC5D`
 
-### `payments.getPaymentStatus(orderId)`
+### `payments.getStatus(payload)`
 
 Calls LiqPay's status API and returns `Promise<Result<PaymentStatusResponse>>`.
 
 ```ts
-const result = await liqpay.payments.getPaymentStatus('order-123')
+import type { PaymentStatusInput } from 'liqpay-nestjs'
+
+const payload: PaymentStatusInput = { orderId: 'order-123' }
+const result = await liqpay.payments.getStatus(payload)
 
 if (result.error) {
 	console.error(result.error.code, result.error.description)
@@ -241,7 +250,7 @@ if (result.error) {
 }
 ```
 
-This is the only payments helper that performs an HTTP request.
+This is the only payments helper that performs an HTTP request. The library fills `action: 'status'`, `version: 7`, and your configured `publicKey` automatically.
 
 ## Webhooks API
 
@@ -249,7 +258,8 @@ This is the only payments helper that performs an HTTP request.
 
 ```ts
 import { Body, Controller, Post } from '@nestjs/common'
-import { LiqPayEnvelope, LiqpayService } from 'liqpay-nestjs'
+import { LiqpayService } from 'liqpay-nestjs'
+import type { LiqPayEnvelope } from 'liqpay-nestjs'
 
 @Controller('payments')
 export class WebhookController {
@@ -268,7 +278,7 @@ export class WebhookController {
 }
 ```
 
-The envelope shape is:
+`LiqPayEnvelope` is the callback wrapper sent by LiqPay:
 
 ```ts
 type LiqPayEnvelope = {
@@ -279,20 +289,10 @@ type LiqPayEnvelope = {
 
 ## Checkout Types
 
-The checkout flow exposes three related types.
-
-| Type                 | Purpose                                                                                            |
-| -------------------- | -------------------------------------------------------------------------------------------------- |
-| `CheckoutInput`      | The consumer-facing payload you pass into `pay`, `hold`, `subscribe`, or `getPayButton`.           |
-| `CheckoutRequest`    | The enriched request after the library injects `action`, `version`, `publicKey`, and default URLs. |
-| `RawCheckoutRequest` | The final wire-format payload sent to LiqPay after snake_case and value transformations.           |
-
-In most applications you should create `CheckoutInput` values and let the library build the rest.
-
-### Minimal `CheckoutInput`
+For library consumers, the main checkout type is `CheckoutInput`.
 
 ```ts
-import { CheckoutInput } from 'liqpay-nestjs'
+import type { CheckoutInput } from 'liqpay-nestjs'
 
 const payload: CheckoutInput = {
 	amount: 100,
@@ -302,64 +302,43 @@ const payload: CheckoutInput = {
 }
 ```
 
-### Advanced `CheckoutInput` fields
-
-The public checkout input supports many LiqPay options, including:
+Useful optional fields include:
 
 - `resultUrl`, `serverUrl`
 - `paytypes`, `language`, `expiredDate`
-- `cardToken`, `customer`, `customerUserId`, `recurringByToken`
+- `verifyCode`
+- `fiscalData`, `splitRules`, `detailAddenda`
+- `customer`, `customerUserId`, `recurringByToken`
 - `subscribe`, `subscribeDateStart`, `subscribePeriodicity`
-- `fiscalData`, `detailAddenda`, `splitRules`
 - sender metadata such as `senderFirstName`, `senderLastName`, `senderAddress`, and `senderCountryCode`
 - product metadata such as `productName`, `productDescription`, `productCategory`, and `productUrl`
 
-## Request and Response Normalization
+The source repository keeps the full request and response models under `src/core/types` if you need exact field-level reference.
 
-The library keeps the application-facing API mostly in camelCase and handles LiqPay's transport format internally.
+## Type Exports
 
-- Top-level request fields use names like `orderId`, `resultUrl`, `serverUrl`, `verifyCode`, `fiscalData`, and `detailAddenda`.
-- Outgoing requests are serialized into LiqPay's expected field format.
-- Checkout callbacks and payment status responses are transformed back into camelCase.
-- Several values such as dates, booleans, and enum-backed fields are normalized during parsing.
-- Some nested helper objects still use provider-specific field names defined by their exported schemas.
-
-## Schemas and Types
-
-All public schemas and types are exported from the package root.
+The package root exports TypeScript types for request and response modeling, for example:
 
 ```ts
-import {
+import type {
 	CheckoutCallback,
-	CheckoutCallbackSchema,
 	CheckoutInput,
-	CheckoutInputSchema,
 	LiqPayEnvelope,
-	LiqPayEnvelopeSchema,
+	LiqPayError,
+	PaymentStatusInput,
 	PaymentStatusResponse,
-	PaymentStatusResponseSchema,
 	Result,
 } from 'liqpay-nestjs'
 ```
 
-Main export groups:
+It also exports these runtime values:
 
-- base: `LiqPayEnvelope`, `LiqPayEnvelopeSchema`, `Result<T>`, request and response unions
-- checkout: `CheckoutInput`, `CheckoutInputSchema`, `CheckoutRequest`, `CheckoutCallback`, and raw request helpers
-- payment status: `PaymentStatusRequest`, `PaymentStatusRequestSchema`, `PaymentStatusResponse`, `PaymentStatusResponseSchema`
-- common: fiscal, split, and addenda schemas and their types
-- enums: action, currency, language, paytype, version, payment status, and related schema exports
-- error: LiqPay error response and error code schemas and types
-- nest: `LiqPayModule`, `LiqpayService`, `LiqPayOptions`, `LiqPayAsyncOptions`, `LIQPAY_OPTIONS`
+- `LiqPayModule`
+- `LiqpayService`
+- `LIQPAY_OPTIONS`
+- `UnitEnum`
 
-### Validate controller input with the exported schemas
-
-```ts
-import { CheckoutInputSchema } from 'liqpay-nestjs'
-
-const payload = CheckoutInputSchema.parse(input)
-const checkout = liqpay.payments.pay(payload)
-```
+Note: the package root currently exports types, not Zod schema values. The schema implementations live in the source under `src/core/types`.
 
 ## Result Contract and Error Handling
 
@@ -373,29 +352,29 @@ type Result<T> =
 
 This applies to:
 
-- `liqpay.payments.getPaymentStatus(...)`
+- `liqpay.payments.getStatus(...)`
 - `liqpay.webhooks.parseCheckoutCallback(...)`
 
-Possible error sources include:
+Errors can come from:
 
-- LiqPay provider errors parsed from `err_code` and `err_description`
+- LiqPay API error responses
 - invalid callback signatures
 - Base64 decode failures
 - invalid JSON responses
-- schema validation failures
+- response validation failures
 - HTTP transport failures
 
 Always check `result.error` before using `result.data`.
 
-## Advanced Nest Exports
+## Nest Exports
 
-The package root also exports:
+The package root exports:
 
+- `LiqPayModule`
+- `LiqpayService`
 - `LIQPAY_OPTIONS`
-- `createLiqpayOptionsProvider(...)`
-- `createLiqpayAsyncOptionsProvider(...)`
-
-These are useful if you want to build custom providers around the package token instead of using `LiqPayModule` directly.
+- `LiqPayOptions`
+- `LiqPayAsyncOptions`
 
 ## Build
 

@@ -15,7 +15,8 @@
 		"nestjs-module"
 	],
 	"files": [
-		"dist"
+		"dist",
+		"README.md"
 	],
 	"exports": {
 		".": {
