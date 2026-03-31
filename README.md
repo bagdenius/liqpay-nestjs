@@ -1,4 +1,4 @@
-# liqpay-nestjs (<0.3.0)
+# liqpay-nestjs (for version<0.3.0)
 
 NestJS module for LiqPay payments with DI-friendly configuration, signed checkout helpers, typed request and response models, and webhook callback parsing.
 
