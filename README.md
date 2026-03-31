@@ -1,14 +1,15 @@
 # liqpay-nestjs
 
-NestJS module for LiqPay payments with typed request models, signed checkout payload generation, webhook callback parsing, and payment status lookups.
+NestJS module for LiqPay payments with typed request models, signed checkout payload generation, webhook callback parsing, payment status lookups, and refund initiation.
 
 ## Features
 
 - NestJS module with `forRoot` and `forRootAsync`
-- `LiqpayService` with `payments` and `webhooks` helpers
+- `LiqpayService` with `payments`, `refunds`, and `webhooks` helpers
 - Signed checkout builders for standard payment, hold, and subscription flows
 - HTML checkout button generation with LiqPay SDK markup
 - Typed payment status requests and normalized responses
+- Refund initiation through `liqpay.refunds`
 - TypeScript types exported from the package root
 
 ## Requirements
@@ -117,6 +118,12 @@ export class PaymentsController {
 }
 ```
 
+`LiqpayService` currently exposes three helper groups:
+
+- `payments`
+- `refunds`
+- `webhooks`
+
 ## Typical Flow
 
 1. Register `LiqPayModule` with your public and private keys.
@@ -125,6 +132,7 @@ export class PaymentsController {
 4. Receive the LiqPay callback envelope at your `serverUrl` endpoint.
 5. Parse the callback with `liqpay.webhooks.parseCheckoutCallback(...)`.
 6. Query the current state later with `liqpay.payments.getStatus({ orderId })` when needed.
+7. Optionally trigger a refund with `liqpay.refunds.refund({ amount, orderId })`.
 
 ## Configuration
 
@@ -252,6 +260,37 @@ if (result.error) {
 
 This is the only payments helper that performs an HTTP request. The library fills `action: 'status'`, `version: 7`, and your configured `publicKey` automatically.
 
+## Refunds API
+
+`LiqpayService.refunds` currently exposes one method: `refund(payload)`.
+
+### `refunds.refund(payload)`
+
+Triggers a refund request for an existing order.
+
+```ts
+await liqpay.refunds.refund({
+	amount: 50,
+	orderId: 'order-123',
+})
+```
+
+Payload shape:
+
+```ts
+{
+	amount: number
+	orderId: string
+}
+```
+
+Notes:
+
+- `amount` must be a positive number.
+- `orderId` must reference the original merchant order.
+- Refund-specific models exist in `src/core/types/refund`, but they are not exported from the package root.
+- The current public refund helper does not expose a root-exported typed refund response contract.
+
 ## Webhooks API
 
 `LiqpayService.webhooks.parseCheckoutCallback(envelope)` validates the callback signature, decodes the Base64 payload, and parses it into `Promise<Result<CheckoutCallback>>`.
@@ -313,7 +352,7 @@ Useful optional fields include:
 - sender metadata such as `senderFirstName`, `senderLastName`, `senderAddress`, and `senderCountryCode`
 - product metadata such as `productName`, `productDescription`, `productCategory`, and `productUrl`
 
-The source repository keeps the full request and response models under `src/core/types` if you need exact field-level reference, including the internal refund models.
+The source repository keeps the full request and response models under `src/core/types` if you need exact field-level reference, including refund models that are not currently re-exported from the package root.
 
 ## Type Exports
 
@@ -343,17 +382,7 @@ It also exports these runtime values:
 - `UnitEnum`
 
 Note: the package root currently exports types, not Zod schema values. The schema implementations live in the source under `src/core/types`.
-
-## Refunds Status
-
-The repository currently contains refund-related source files under `src/core/types/refund`, `src/core/clients/refunds.client.ts`, and `src/nest/services/refunds.service.ts`.
-
-That refund code is not part of the current public package API:
-
-- `LiqpayService` does not expose a `refunds` property
-- the package root does not export `RefundInput`, `RefundRequest`, `RefundResponse`, or `RefundsService`
-
-This README documents the public API that consumers can actually import from `liqpay-nestjs` today.
+Refund-specific types are not currently re-exported from the package root.
 
 ## Result Contract and Error Handling
 
@@ -391,10 +420,4 @@ The package root exports:
 - `LiqPayOptions`
 - `LiqPayAsyncOptions`
 
-It does not currently export `RefundsService` or refund-specific request and response types from the package root.
-
-## Build
-
-```bash
-npm run build
-```
+Refund support is available through `LiqpayService.refunds`, but the package root does not currently export `RefundsService` or refund-specific request and response types.
