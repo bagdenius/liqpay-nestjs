@@ -313,7 +313,7 @@ Useful optional fields include:
 - sender metadata such as `senderFirstName`, `senderLastName`, `senderAddress`, and `senderCountryCode`
 - product metadata such as `productName`, `productDescription`, `productCategory`, and `productUrl`
 
-The source repository keeps the full request and response models under `src/core/types` if you need exact field-level reference.
+The source repository keeps the full request and response models under `src/core/types` if you need exact field-level reference, including the internal refund models.
 
 ## Type Exports
 
@@ -323,11 +323,15 @@ The package root exports TypeScript types for request and response modeling, for
 import type {
 	CheckoutCallback,
 	CheckoutInput,
+	Currency,
 	LiqPayEnvelope,
 	LiqPayError,
+	LiqPayRequest,
+	LiqPayResponse,
 	PaymentStatusInput,
 	PaymentStatusResponse,
 	Result,
+	SplitRule,
 } from 'liqpay-nestjs'
 ```
 
@@ -339,6 +343,17 @@ It also exports these runtime values:
 - `UnitEnum`
 
 Note: the package root currently exports types, not Zod schema values. The schema implementations live in the source under `src/core/types`.
+
+## Refunds Status
+
+The repository currently contains refund-related source files under `src/core/types/refund`, `src/core/clients/refunds.client.ts`, and `src/nest/services/refunds.service.ts`.
+
+That refund code is not part of the current public package API:
+
+- `LiqpayService` does not expose a `refunds` property
+- the package root does not export `RefundInput`, `RefundRequest`, `RefundResponse`, or `RefundsService`
+
+This README documents the public API that consumers can actually import from `liqpay-nestjs` today.
 
 ## Result Contract and Error Handling
 
@@ -375,6 +390,8 @@ The package root exports:
 - `LIQPAY_OPTIONS`
 - `LiqPayOptions`
 - `LiqPayAsyncOptions`
+
+It does not currently export `RefundsService` or refund-specific request and response types from the package root.
 
 ## Build
 
