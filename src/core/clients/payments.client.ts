@@ -17,7 +17,7 @@ import {
 import { UtilsClient } from './utils.client'
 
 export class PaymentsClient {
-	constructor(private readonly utils: UtilsClient) {}
+	public constructor(private readonly utils: UtilsClient) {}
 
 	private prepare(payload: CheckoutInput, action: CheckoutAction) {
 		const fullfilled: CheckoutRequest = {
@@ -110,7 +110,6 @@ export class PaymentsClient {
 			request,
 			RawPaymentStatusRequestSchema,
 			PaymentStatusResponseSchema,
-			REQUEST_URL,
 		)
 	}
 }

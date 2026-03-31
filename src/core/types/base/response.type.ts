@@ -4,12 +4,17 @@ import {
 	PaymentStatusResponse,
 	RawPaymentStatusResponse,
 } from '../payment-status'
+import { RawRefundResponse, RefundResponse } from '../refund'
 
-export type LiqPayResponse = CheckoutCallback | PaymentStatusResponse
+export type LiqPayResponse =
+	| CheckoutCallback
+	| PaymentStatusResponse
+	| RefundResponse
 
 export type LiqPayRawResponse =
 	| RawCheckoutCallback
 	| RawPaymentStatusResponse
+	| RawRefundResponse
 	| LiqPayErrorResponse
 
 export type Result<T> =

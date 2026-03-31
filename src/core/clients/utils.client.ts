@@ -8,6 +8,7 @@ import {
 	LiqPayResponse,
 	Result,
 } from '../types/base'
+import { REQUEST_URL } from '../types/common'
 import { LiqPayError, LiqPayErrorResponseSchema } from '../types/error'
 
 export class UtilsClient {
@@ -93,7 +94,7 @@ export class UtilsClient {
 		payload: TRequest,
 		rawSchema: z.ZodType<TRawRequest>,
 		responseSchema: z.ZodType<TResponse>,
-		url: string,
+		url: string = REQUEST_URL,
 	): Promise<Result<TResponse>> {
 		const raw = rawSchema.parse(payload)
 		const envelope = this.toEnvelope(raw)
