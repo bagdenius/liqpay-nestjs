@@ -4,20 +4,22 @@ import {
 	type CheckoutRequest,
 	RawCheckoutRequestSchema,
 } from '../types/checkout'
-import { Action } from '../types/common/enums'
+import { CHECKOUT_URL, REQUEST_URL } from '../types/common'
+import { CheckoutAction } from '../types/common/enums'
 import {
+	PaymentStatusInput,
+	PaymentStatusRequest,
 	PaymentStatusResponse,
 	PaymentStatusResponseSchema,
 	RawPaymentStatusRequestSchema,
 } from '../types/payment-status'
-import { CHECKOUT_URL, REQUEST_URL } from '../url.type'
 
 import { UtilsClient } from './utils.client'
 
 export class PaymentsClient {
 	constructor(private readonly utils: UtilsClient) {}
 
-	private prepare(payload: CheckoutInput, action: Action) {
+	private prepare(payload: CheckoutInput, action: CheckoutAction) {
 		const fullfilled: CheckoutRequest = {
 			...payload,
 			action,
@@ -35,7 +37,7 @@ export class PaymentsClient {
 		return `${CHECKOUT_URL}?data=${data}&signature=${signature}`
 	}
 
-	private checkout(payload: CheckoutInput, action: Action) {
+	private checkout(payload: CheckoutInput, action: CheckoutAction) {
 		const { fullfilled, data, signature } = this.prepare(payload, action)
 		return {
 			...fullfilled,
@@ -96,10 +98,16 @@ export class PaymentsClient {
 	}
 
 	public async getStatus(
-		orderId: string,
+		payload: PaymentStatusInput,
 	): Promise<Result<PaymentStatusResponse>> {
+		const request: PaymentStatusRequest = {
+			...payload,
+			action: 'status',
+			version: 7,
+			publicKey: this.utils.publicKey,
+		}
 		return await this.utils.call(
-			{ action: 'status', orderId },
+			request,
 			RawPaymentStatusRequestSchema,
 			PaymentStatusResponseSchema,
 			REQUEST_URL,

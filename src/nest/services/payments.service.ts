@@ -1,5 +1,6 @@
 import { LiqPayClient } from '../../core/clients'
 import { CheckoutInput } from '../../core/types/checkout'
+import { PaymentStatusInput } from '../../core/types/payment-status'
 
 export class PaymentsService {
 	public constructor(private readonly client: LiqPayClient) {}
@@ -28,7 +29,7 @@ export class PaymentsService {
 		)
 	}
 
-	public async getStatus(orderId: string) {
-		return this.client.payments.getStatus(orderId)
+	public async getStatus(payload: PaymentStatusInput) {
+		return this.client.payments.getStatus(payload)
 	}
 }

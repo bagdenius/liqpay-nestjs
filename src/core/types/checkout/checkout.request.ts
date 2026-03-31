@@ -15,7 +15,7 @@ import {
 	SplitRuleSchema,
 } from '../common'
 import {
-	Action,
+	CheckoutAction,
 	CurrencySchema,
 	LanguageSchema,
 	LiqPayVersion,
@@ -222,7 +222,7 @@ export type CheckoutRequest = CheckoutInput & {
 	 * - `subscribe` - regular payment
 	 * - `paydonate` - donation
 	 */
-	action: Extract<Action, 'pay' | 'hold' | 'subscribe' | 'paydonate'>
+	action: CheckoutAction
 }
 
 export const RawCheckoutRequestSchema = z
