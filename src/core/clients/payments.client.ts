@@ -79,7 +79,7 @@ export class PaymentsClient {
 		}
 	}
 
-	public getPayButton(
+	public getCheckoutButton(
 		payload: CheckoutInput,
 		buttonText: string = 'Pay',
 		buttonColor: string = '#77CC5D',

@@ -40,3 +40,8 @@ export const parseString = (value: unknown): string | undefined => {
 	if (value === undefined) return undefined
 	return String(value)
 }
+
+export const toBase64 = (value: unknown): string | undefined => {
+	if (value === undefined) return undefined
+	return Buffer.from(JSON.stringify(value)).toString('base64')
+}

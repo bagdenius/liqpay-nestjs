@@ -7,6 +7,7 @@ import {
 	join,
 	removeUndefined,
 	stringify,
+	toBase64,
 } from '../../utils'
 import {
 	DetailAddendaSchema,
@@ -23,16 +24,13 @@ import {
 } from '../common/enums'
 
 /**
- * Public layer - what library user provides
- * These are the fields user can actually fill
+ * Contract of data that is passed when forming a payment request as `base64` encoded string data when calling the LiqPay API
  */
 export const CheckoutInputSchema = z.object({
 	/**
 	 * Payment amount. For example: `5`, `7.34`
 	 */
 	amount: z.number().positive(),
-
-	cardToken: z.string().optional(),
 
 	/**
 	 * Payment currency. Possible values: `USD`, `EUR`, `UAH`
@@ -43,8 +41,6 @@ export const CheckoutInputSchema = z.object({
 	 * Payment purpose
 	 */
 	description: z.string(),
-
-	ip: z.string().optional(),
 
 	/**
 	 * Unique purchase ID in your store. Maximum length __255__ characters
@@ -57,7 +53,7 @@ export const CheckoutInputSchema = z.object({
 	fiscalData: FiscalDataSchema.optional(),
 
 	/**
-	 * The time by which the customer can pay the invoice in `UTC`. Transmitted in the format `2016-04-24 00:00:00`
+	 * The time by which the customer can pay the invoice in `UTC`.
 	 */
 	expiredDate: z.date().optional(),
 
@@ -92,14 +88,14 @@ export const CheckoutInputSchema = z.object({
 	serverUrl: z.string().max(510).optional(),
 
 	/**
-	 * Possible value `Y`. Dynamic verification code, generated and returned in `Callback`. Similarly, the generated code will be passed in the verification transaction to be displayed in the client's card statement. Works for `action = auth` (verifycode)
+	 * Dynamic verification code, generated and returned in `Callback`. Similarly, the generated code will be passed in the verification transaction to be displayed in the client's card statement. Works for `action = auth` (verifycode)
 	 */
 	verifyCode: z.boolean().optional(),
 
 	/**
 	 * Payment with splitting the amount into several recipients. This parameter specifies a `JSON` array with payment splitting rules.
 	 * One debit is made from the client and several credits are made to the recipients. If you need to transfer your purpose for each amount, use the `description` parameter.
-	 * If you need to fiscalize payments for each recipient, add the `rro_info` object. The acquiring fee is charged for each recipient.
+	 * If you need to fiscalize payments for each recipient, add the `fiscalData` object. The acquiring fee is charged for each recipient.
 	 */
 	splitRules: z.array(SplitRuleSchema).optional(),
 
@@ -114,7 +110,7 @@ export const CheckoutInputSchema = z.object({
 	senderCity: z.string().optional(),
 
 	/**
-	 * Sender country code. Numeric __ISO 3166-1__ code
+	 * Sender country code. Numeric `ISO 3166-1` code
 	 */
 	senderCountryCode: z.string().optional(),
 
@@ -134,12 +130,12 @@ export const CheckoutInputSchema = z.object({
 	senderPostalCode: z.string().optional(),
 
 	/**
-	 * Regular payment. Possible values: `1`
+	 * Regular payment
 	 */
 	subscribe: z.boolean().optional(),
 
 	/**
-	 * Date of first payment. The time must be specified in the format `2015-03-31 00:00:00` in `UTC`. If the date is past, the subscription will be activated from the current date of receipt of the request
+	 * Date of first payment in UTC. If the date is past, the subscription will be activated from the current date of receipt of the request
 	 */
 	subscribeDateStart: z.date().optional(),
 
@@ -158,7 +154,7 @@ export const CheckoutInputSchema = z.object({
 	customer: z.string().max(100).optional(),
 
 	/**
-	 * Allows you to generate a `card_token` of the payer, which you will receive in a callback request to `server_url`. `card_token` allows you to make payments without entering the payer's card details, using the token payment API - that is, in 1 click. To receive `card_token`, you must pass the value: `1` in the request (recurringbytoken)
+	 * Allows you to generate a `card_token` of the payer, which you will receive in a callback request to `server_url`. `card_token` allows you to make payments without entering the payer's card details, using the token payment API - that is, in 1 click.
 	 */
 	recurringByToken: z.boolean().optional(),
 
@@ -169,9 +165,6 @@ export const CheckoutInputSchema = z.object({
 
 	/**
 	 * Long Detail Addenda entry. __Required for merchants with MCC 4511__.
-	 *
-	 * The `dae` parameter is a `JSON` string to which `base64` has been applied.
-	 * It can contain the parameters given in the example below. (dae)
 	 */
 	detailAddenda: DetailAddendaSchema.optional(),
 
@@ -207,10 +200,6 @@ export const CheckoutInputSchema = z.object({
 export type CheckoutInput = z.infer<typeof CheckoutInputSchema>
 
 /**
- * Internal layer - full object inside the library
- * Includes version, publicKey, action — set internally
- *
- *
  * Contract of data that is passed when forming a payment request as `base64` encoded string data when calling the LiqPay API
  */
 export type CheckoutRequest = CheckoutInput & {
@@ -233,13 +222,9 @@ export type CheckoutRequest = CheckoutInput & {
 	 * - `subscribe` - regular payment
 	 * - `paydonate` - donation
 	 */
-	action: Action
+	action: Extract<Action, 'pay' | 'hold' | 'subscribe' | 'paydonate'>
 }
 
-/**
- * Raw layer - what is actually sent to LiqPay API
- * snake_case, bool/date/string transformations
- */
 export const RawCheckoutRequestSchema = z
 	.custom<CheckoutRequest>()
 	.transform(req => {
@@ -248,15 +233,65 @@ export const RawCheckoutRequestSchema = z
 		const snakelized = objectToSnake(rest)
 		const transformed = {
 			...snakelized,
+
+			/**
+			 * Data for fiscalization (rro_info)
+			 */
 			rro_info: fiscalData,
+
+			/**
+			 * The time by which the customer can pay the invoice in `UTC`. Transmitted in the format `2016-04-24 00:00:00`
+			 */
 			expired_date: dateToIso(snakelized.expired_date),
+
+			/**
+			 * Parameter that transmits payment methods to be displayed at checkout.
+			 * If the parameter is not provided, the store settings are applied. Possible values:
+			 * - `apay` - Apple Pay
+			 * - `gpay` - Google Pay
+			 * - `card` - card payment
+			 * - `privat24` - via Privat24 account
+			 * - `moment_part` - installments
+			 * - `paypart` - payment in parts
+			 * - `cash` - cash
+			 * - `invoice` - invoice to e-mail
+			 * - `qr` - scanning a QR code
+			 */
 			paytypes: join(snakelized.paytypes),
+
+			/**
+			 * Possible value `Y`. Dynamic verification code, generated and returned in `Callback`. Similarly, the generated code will be passed in the verification transaction to be displayed in the client's card statement. Works for `action = auth` (verifycode)
+			 */
 			verifycode: boolTo(verifyCode, 'Y'),
+
+			/**
+			 * Payment with splitting the amount into several recipients. This parameter specifies a `JSON` array with payment splitting rules.
+			 * One debit is made from the client and several credits are made to the recipients. If you need to transfer your purpose for each amount, use the `description` parameter.
+			 * If you need to fiscalize payments for each recipient, add the `rro_info` object. The acquiring fee is charged for each recipient.
+			 */
 			split_rules: stringify(snakelized.split_rules),
+
+			/**
+			 * Regular payment. Possible values: `1`
+			 */
 			subscribe: boolTo(snakelized.subscribe, '1'),
+
+			/**
+			 * Date of first payment. The time must be specified in the format `2015-03-31 00:00:00` in `UTC`. If the date is past, the subscription will be activated from the current date of receipt of the request
+			 */
 			subscribe_date_start: dateToIso(snakelized.subscribe_date_start),
+
+			/**
+			 * Allows you to generate a `card_token` of the payer, which you will receive in a callback request to `server_url`. `card_token` allows you to make payments without entering the payer's card details, using the token payment API - that is, in 1 click. To receive `card_token`, you must pass the value: `1` in the request (recurringbytoken)
+			 */
 			recurringbytoken: boolTo(recurringByToken, '1'),
-			dae: stringify(detailAddenda),
+
+			/**
+			 * Long Detail Addenda entry. __Required for merchants with MCC 4511__.
+			 *
+			 * The `dae` parameter is a `JSON` string to which `base64` has been applied.
+			 */
+			dae: toBase64(detailAddenda),
 		}
 		return removeUndefined(transformed)
 	})

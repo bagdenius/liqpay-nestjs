@@ -136,7 +136,7 @@ export interface CheckoutCallback {
 	/**
 	 * `Order_id` of payment in the LiqPay system
 	 */
-	_order_id: string
+	liqpay_order_id: string
 
 	/**
 	 * Code that represents whether 3D-Secure verification was performed during payment. Possible values:
@@ -212,7 +212,7 @@ export interface CheckoutCallback {
 	sender_card_country: string
 
 	/**
-	 * Sender's card
+	 * Sender's card mask
 	 */
 	sender_card_mask2: string
 

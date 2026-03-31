@@ -1,2 +1,2 @@
-export * from './checkout-callback.schema'
-export * from './checkout-request'
+export * from './checkout.callback'
+export * from './checkout.request'

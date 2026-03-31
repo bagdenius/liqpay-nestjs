@@ -21,7 +21,11 @@ export class PaymentsService {
 		buttonText?: string,
 		buttonColor?: string,
 	): string {
-		return this.client.payments.getPayButton(payload, buttonText, buttonColor)
+		return this.client.payments.getCheckoutButton(
+			payload,
+			buttonText,
+			buttonColor,
+		)
 	}
 
 	public async getStatus(orderId: string) {

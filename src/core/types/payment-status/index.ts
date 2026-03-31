@@ -1,2 +1,2 @@
-export * from './payment-status-request.schema'
-export * from './payment-status-response.schema'
+export * from './payment-status.request'
+export * from './payment-status.response'

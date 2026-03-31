@@ -148,7 +148,7 @@ export interface PaymentStatusResponse {
 	/**
 	 * `Order_id` of payment in the LiqPay system
 	 */
-	_order_id: string
+	liqpay_order_id: string
 
 	/**
 	 * Payment in installments sign
