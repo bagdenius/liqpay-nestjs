@@ -107,7 +107,7 @@ export const RawCheckoutCallbackSchema = z.object({
 	/**
 	 * Date of debiting funds
 	 */
-	completion_date: z.string().optional(),
+	completion_date: z.union([z.number(), z.string()]).optional(),
 
 	/**
 	 * Payment creation date
@@ -215,7 +215,7 @@ export const RawCheckoutCallbackSchema = z.object({
 	/**
 	 * Date of last payment refund
 	 */
-	refund_date_last: z.string().optional(),
+	refund_date_last: z.union([z.number(), z.string()]).optional(),
 
 	/**
 	 * Unique transaction number in the authorization and settlement system of the servicing bank `Retrieval Reference number`
