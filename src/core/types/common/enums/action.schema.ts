@@ -142,7 +142,7 @@ export type Action = z.infer<typeof ActionSchema>
 
 export type CheckoutAction = Extract<
 	Action,
-	'pay' | 'hold' | 'subscribe' | 'paydonate'
+	'pay' | 'hold' | 'subscribe' | 'paydonate' | 'auth'
 >
 
 export type PaymentStatusAction = Extract<Action, 'status'>

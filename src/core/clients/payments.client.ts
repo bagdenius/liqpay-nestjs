@@ -57,6 +57,16 @@ export class PaymentsClient {
 		}
 	}
 
+	public getAuthUrl(payload: CheckoutInput) {
+		const { request, data, signature } = this.prepare(payload, 'auth')
+		return {
+			request,
+			data,
+			signature,
+			url: this.buildUrl(data, signature),
+		}
+	}
+
 	// TODO: implement
 	public hold(payload: CheckoutInput) {
 		const { request, data, signature } = this.prepare(payload, 'hold')
