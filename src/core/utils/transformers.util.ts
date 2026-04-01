@@ -22,8 +22,8 @@ export const parseDate = (value: Date | number | string | undefined) => {
 }
 
 export const parseOptional = <T>(
-	schema: z.ZodType<T>,
 	value: unknown,
+	schema: z.ZodType<T>,
 ): T | undefined => {
 	if (value == null) return undefined
 	const result = schema.safeParse(value)

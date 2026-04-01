@@ -342,12 +342,12 @@ export const PaymentStatusResponseSchema =
 			 * - `auth` - card pre-authorization
 			 * - `regular` - regular payment
 			 */
-			action: parseOptional(ActionSchema, camelized.action),
+			action: parseOptional(camelized.action, ActionSchema),
 
 			/**
 			 * Bonus type, possible values: `bonusplus`, `discount_club`, `personal`, `promo`
 			 */
-			bonusType: parseOptional(BonusTypeSchema, camelized.bonusType),
+			bonusType: parseOptional(camelized.bonusType, BonusTypeSchema),
 
 			/**
 			 * Payment creation date
@@ -357,17 +357,17 @@ export const PaymentStatusResponseSchema =
 			/**
 			 * Payment currency
 			 */
-			currency: parseOptional(CurrencySchema, camelized.currency),
+			currency: parseOptional(camelized.currency, CurrencySchema),
 
 			/**
 			 * Transaction currency credit
 			 */
-			currencyCredit: parseOptional(CurrencySchema, camelized.currencyCredit),
+			currencyCredit: parseOptional(camelized.currencyCredit, CurrencySchema),
 
 			/**
 			 * Transaction currency debit
 			 */
-			currencyDebit: parseOptional(CurrencySchema, camelized.currencyDebit),
+			currencyDebit: parseOptional(camelized.currencyDebit, CurrencySchema),
 
 			/**
 			 * Payment completion/change date
@@ -382,7 +382,7 @@ export const PaymentStatusResponseSchema =
 			/**
 			 * Client language: `uk`, `en`
 			 */
-			language: parseOptional(LanguageSchema, camelized.language),
+			language: parseOptional(camelized.language, LanguageSchema),
 
 			/**
 			 * `OrderId` of payment in the LiqPay system
@@ -400,7 +400,7 @@ export const PaymentStatusResponseSchema =
 			 * - `6` - the payer's card issuer does not support 3D-Secure technology
 			 * - `7` - the transaction was completed without 3D-Secure
 			 */
-			mpiEci: parseOptional(MpiEciSchema, String(camelized.mpiEci)),
+			mpiEci: parseOptional(String(camelized.mpiEci), MpiEciSchema),
 
 			/**
 			 * Payment `OrderId`
@@ -420,17 +420,17 @@ export const PaymentStatusResponseSchema =
 			 * - `invoice` - invoice to e-mail
 			 * - `qr` - scan qr code
 			 */
-			paytype: parseOptional(PaytypeSchema, camelized.paytype),
+			paytype: parseOptional(camelized.paytype, PaytypeSchema),
 
 			/**
 			 * Result of query execution: `ok`, `error`
 			 */
-			result: parseOptional(RequestResultSchema, camelized.result),
+			result: parseOptional(camelized.result, RequestResultSchema),
 
 			/**
 			 * Payment status
 			 */
-			status: parseOptional(PaymentStatusSchema, camelized.status),
+			status: parseOptional(camelized.status, PaymentStatusSchema),
 
 			/**
 			 * An additional payment status indicating that the current payment is reserved for a refund on your store. Possible values: `true` - the payment is reserved for a refund
@@ -445,7 +445,7 @@ export const PaymentStatusResponseSchema =
 			/**
 			 * API version. Current value is `7`
 			 */
-			version: parseOptional(LiqPayVersionSchema, camelized.version),
+			version: parseOptional(camelized.version, LiqPayVersionSchema),
 		}
 		return removeUndefined(transformed)
 	})

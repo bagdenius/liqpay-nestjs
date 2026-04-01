@@ -358,7 +358,7 @@ export const CheckoutCallbackSchema = RawCheckoutCallbackSchema.transform(
 			/**
 			 * API version. Current value is `7`
 			 */
-			version: parseOptional(LiqPayVersionSchema, camelized.version),
+			version: parseOptional(camelized.version, LiqPayVersionSchema),
 
 			/**
 			 * Acquirer ID
@@ -373,8 +373,8 @@ export const CheckoutCallbackSchema = RawCheckoutCallbackSchema.transform(
 			 * - `regular` - regular payment
 			 */
 			action: parseOptional(
-				ActionSchema.extract(['pay', 'hold', 'subscribe', 'regular']),
 				camelized.action,
+				ActionSchema.extract(['pay', 'hold', 'subscribe', 'regular']),
 			),
 
 			/**
@@ -390,17 +390,17 @@ export const CheckoutCallbackSchema = RawCheckoutCallbackSchema.transform(
 			/**
 			 * Payment currency
 			 */
-			currency: parseOptional(CurrencySchema, camelized.currency),
+			currency: parseOptional(camelized.currency, CurrencySchema),
 
 			/**
 			 * Transaction currency credit
 			 */
-			currencyCredit: parseOptional(CurrencySchema, camelized.currencyCredit),
+			currencyCredit: parseOptional(camelized.currencyCredit, CurrencySchema),
 
 			/**
 			 * Transaction currency debit
 			 */
-			currencyDebit: parseOptional(CurrencySchema, camelized.currencyDebit),
+			currencyDebit: parseOptional(camelized.currencyDebit, CurrencySchema),
 
 			/**
 			 * Payment completion/change date
@@ -410,7 +410,7 @@ export const CheckoutCallbackSchema = RawCheckoutCallbackSchema.transform(
 			/**
 			 * Error code
 			 */
-			errCode: parseOptional(LiqPayErrorCodeSchema, camelized.errCode),
+			errCode: parseOptional(camelized.errCode, LiqPayErrorCodeSchema),
 
 			/**
 			 * Represents whether 3D-Secure verification was performed during payment. Possible values: `true` - the transaction went through with 3DS verification, `false` - the transaction went through without 3DS verification
@@ -428,7 +428,7 @@ export const CheckoutCallbackSchema = RawCheckoutCallbackSchema.transform(
 			 * - `6` - the payer's card issuer does not support 3D-Secure technology
 			 * - `7` - the transaction was completed without 3D-Secure
 			 */
-			mpiEci: parseOptional(MpiEciSchema, String(camelized.mpiEci)),
+			mpiEci: parseOptional(String(camelized.mpiEci), MpiEciSchema),
 
 			/**
 			 * Payment `OrderId`
@@ -451,6 +451,7 @@ export const CheckoutCallbackSchema = RawCheckoutCallbackSchema.transform(
 			 * - `qr` - by scanning qr code
 			 */
 			paytype: parseOptional(
+				camelized.paytype,
 				PaytypeSchema.extract([
 					'card',
 					'privat24',
@@ -460,7 +461,6 @@ export const CheckoutCallbackSchema = RawCheckoutCallbackSchema.transform(
 					'invoice',
 					'qr',
 				]),
-				camelized.paytype,
 			),
 
 			/**
@@ -471,7 +471,7 @@ export const CheckoutCallbackSchema = RawCheckoutCallbackSchema.transform(
 			/**
 			 * Payment status
 			 */
-			status: parseOptional(PaymentStatusSchema, camelized.status),
+			status: parseOptional(camelized.status, PaymentStatusSchema),
 
 			/**
 			 * An additional payment status indicating that the current payment is reserved for a refund on your store. Possible values: `true` - the payment is reserved for a refund
