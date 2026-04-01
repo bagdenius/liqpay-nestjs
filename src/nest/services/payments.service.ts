@@ -9,8 +9,16 @@ export class PaymentsService {
 		return this.client.payments.getCheckoutUrl(payload)
 	}
 
+	public getCheckoutUrlServer(payload: CheckoutInput) {
+		return this.client.payments.getCheckoutUrlServer(payload)
+	}
+
 	public getAuthUrl(payload: CheckoutInput) {
 		return this.client.payments.getAuthUrl(payload)
+	}
+
+	public getAuthUrlServer(payload: CheckoutInput) {
+		return this.client.payments.getAuthUrlServer(payload)
 	}
 
 	public hold(payload: CheckoutInput) {
