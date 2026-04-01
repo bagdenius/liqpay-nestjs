@@ -4,7 +4,7 @@ import {
 	type CheckoutRequest,
 	RawCheckoutRequestSchema,
 } from '../types/checkout'
-import { CHECKOUT_URL, REQUEST_URL } from '../types/common'
+import { CHECKOUT_URL } from '../types/common'
 import { CheckoutAction } from '../types/common/enums'
 import {
 	PaymentStatusInput,
@@ -20,7 +20,7 @@ export class PaymentsClient {
 	public constructor(private readonly utils: UtilsClient) {}
 
 	private prepare(payload: CheckoutInput, action: CheckoutAction) {
-		const fullfilled: CheckoutRequest = {
+		const request: CheckoutRequest = {
 			...payload,
 			action,
 			version: 7,
@@ -28,9 +28,13 @@ export class PaymentsClient {
 			resultUrl: payload.resultUrl ?? this.utils.resultUrl,
 			serverUrl: payload.serverUrl ?? this.utils.serverUrl,
 		}
-		const raw = RawCheckoutRequestSchema.parse(fullfilled)
+		const raw = RawCheckoutRequestSchema.parse(request)
 		const { data, signature } = this.utils.toEnvelope(raw)
-		return { fullfilled, data, signature }
+
+		// testing purpose
+		console.log('RAW: ', raw)
+
+		return { request, data, signature }
 	}
 
 	private buildUrl(data: string, signature: string): string {
@@ -38,33 +42,33 @@ export class PaymentsClient {
 	}
 
 	private checkout(payload: CheckoutInput, action: CheckoutAction) {
-		const { fullfilled, data, signature } = this.prepare(payload, action)
+		const { request, data, signature } = this.prepare(payload, action)
 		return {
-			...fullfilled,
-			url: this.buildUrl(data, signature),
+			request,
 			data,
 			signature,
+			url: this.buildUrl(data, signature),
 		}
 	}
 
 	public getCheckoutUrl(payload: CheckoutInput) {
-		const { fullfilled, data, signature } = this.prepare(payload, 'pay')
+		const { request, data, signature } = this.prepare(payload, 'pay')
 		return {
-			...fullfilled,
-			url: this.buildUrl(data, signature),
+			request,
 			data,
 			signature,
+			url: this.buildUrl(data, signature),
 		}
 	}
 
 	// TODO: implement
 	public hold(payload: CheckoutInput) {
-		const { fullfilled, data, signature } = this.prepare(payload, 'hold')
+		const { request, data, signature } = this.prepare(payload, 'hold')
 		return {
-			...fullfilled,
-			url: this.buildUrl(data, signature),
+			request,
 			data,
 			signature,
+			url: this.buildUrl(data, signature),
 		}
 	}
 
@@ -72,12 +76,12 @@ export class PaymentsClient {
 
 	// TODO: implement
 	public subscribe(payload: CheckoutInput) {
-		const { fullfilled, data, signature } = this.prepare(payload, 'subscribe')
+		const { request, data, signature } = this.prepare(payload, 'subscribe')
 		return {
-			...fullfilled,
-			url: this.buildUrl(data, signature),
+			request,
 			data,
 			signature,
+			url: this.buildUrl(data, signature),
 		}
 	}
 
