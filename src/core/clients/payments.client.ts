@@ -30,10 +30,6 @@ export class PaymentsClient {
 		}
 		const raw = RawCheckoutRequestSchema.parse(request)
 		const { data, signature } = this.utils.toEnvelope(raw)
-
-		// testing purpose
-		console.log('RAW: ', raw)
-
 		return { request, data, signature }
 	}
 
