@@ -59,22 +59,6 @@ export class PaymentsClient {
 		}
 	}
 
-	public async getCheckoutUrlServer(
-		payload: CheckoutInput,
-	): Promise<Result<CheckoutCallback>> {
-		const request: CheckoutRequest = {
-			...payload,
-			action: 'pay',
-			version: 7,
-			publicKey: this.utils.publicKey,
-		}
-		return await this.utils.call(
-			request,
-			RawCheckoutRequestSchema,
-			CheckoutCallbackSchema,
-		)
-	}
-
 	public getAuthUrl(payload: CheckoutInput) {
 		const { request, data, signature } = this.prepare(payload, 'auth')
 		return {
@@ -83,22 +67,6 @@ export class PaymentsClient {
 			signature,
 			url: this.buildUrl(data, signature),
 		}
-	}
-
-	public async getAuthUrlServer(
-		payload: CheckoutInput,
-	): Promise<Result<CheckoutCallback>> {
-		const request: CheckoutRequest = {
-			...payload,
-			action: 'auth',
-			version: 7,
-			publicKey: this.utils.publicKey,
-		}
-		return await this.utils.call(
-			request,
-			RawCheckoutRequestSchema,
-			CheckoutCallbackSchema,
-		)
 	}
 
 	// TODO: implement
