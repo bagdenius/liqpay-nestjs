@@ -8,7 +8,7 @@ import {
 	LiqPayResponse,
 	Result,
 } from '../types/base'
-import { REQUEST_URL } from '../types/common'
+import { LiqPayApiPath, REQUEST_URL } from '../types/common'
 import { LiqPayError, LiqPayErrorResponseSchema } from '../types/error'
 
 export class UtilsClient {
@@ -86,6 +86,16 @@ export class UtilsClient {
 		return this.parseData(schema, rawData)
 	}
 
+	/** testing version without signature validation */
+	public parseEnvelopeTest<TResponse extends LiqPayResponse>(
+		envelope: LiqPayEnvelope,
+		schema: z.ZodType<TResponse>,
+	): Result<TResponse> {
+		const rawData = this.decodeData(envelope.data)
+		console.log('RAW DATA: ', rawData)
+		return this.parseData(schema, rawData)
+	}
+
 	public async call<
 		TRequest extends LiqPayRequest,
 		TRawRequest extends LiqPayRawRequest,
@@ -94,7 +104,7 @@ export class UtilsClient {
 		payload: TRequest,
 		rawSchema: z.ZodType<TRawRequest>,
 		responseSchema: z.ZodType<TResponse>,
-		url: string = REQUEST_URL,
+		url: LiqPayApiPath = REQUEST_URL,
 	): Promise<Result<TResponse>> {
 		const raw = rawSchema.parse(payload)
 		const envelope = this.toEnvelope(raw)
@@ -114,6 +124,10 @@ export class UtilsClient {
 				'Failed to parse JSON response',
 			)
 		}
+
+		/** testing */
+		console.log('RAW DATA: ', rawData)
+
 		return this.parseData(responseSchema, rawData)
 	}
 }

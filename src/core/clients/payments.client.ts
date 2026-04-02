@@ -1,17 +1,15 @@
 import { Result } from '../types/base'
 import {
-	CheckoutCallback,
-	CheckoutCallbackSchema,
-	CheckoutInput,
+	type CheckoutInput,
 	type CheckoutRequest,
 	RawCheckoutRequestSchema,
 } from '../types/checkout'
 import { CHECKOUT_URL } from '../types/common'
 import { CheckoutAction } from '../types/common/enums'
 import {
-	PaymentStatusInput,
-	PaymentStatusRequest,
-	PaymentStatusResponse,
+	type PaymentStatusInput,
+	type PaymentStatusRequest,
+	type PaymentStatusResponse,
 	PaymentStatusResponseSchema,
 	RawPaymentStatusRequestSchema,
 } from '../types/payment-status'

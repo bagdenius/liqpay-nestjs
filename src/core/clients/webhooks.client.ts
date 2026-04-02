@@ -11,4 +11,10 @@ export class WebhooksClient {
 	): Result<CheckoutCallback> {
 		return this.utils.parseEnvelope(envelope, CheckoutCallbackSchema)
 	}
+
+	public parseCheckoutCallbackTest(
+		envelope: LiqPayEnvelope,
+	): Result<CheckoutCallback> {
+		return this.utils.parseEnvelopeTest(envelope, CheckoutCallbackSchema)
+	}
 }

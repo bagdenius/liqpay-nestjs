@@ -7,4 +7,8 @@ export class WebhooksService {
 	public async parseCheckoutCallback(envelope: LiqPayEnvelope) {
 		return this.client.webhooks.parseCheckoutCallback(envelope)
 	}
+
+	public async parseCheckoutCallbackTest(envelope: LiqPayEnvelope) {
+		return this.client.webhooks.parseCheckoutCallbackTest(envelope)
+	}
 }
