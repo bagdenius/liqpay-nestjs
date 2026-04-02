@@ -10,13 +10,17 @@ import { UtilsClient } from './utils.client'
 export class RefundsClient {
 	public constructor(private readonly utils: UtilsClient) {}
 
-	public refund(payload: RefundInput) {
+	public async refund(payload: RefundInput) {
 		const request: RefundRequest = {
 			...payload,
 			version: 7,
 			publicKey: this.utils.publicKey,
 			action: 'refund',
 		}
-		this.utils.call(request, RawRefundRequestSchema, RefundResponseSchema)
+		return await this.utils.call(
+			request,
+			RawRefundRequestSchema,
+			RefundResponseSchema,
+		)
 	}
 }
